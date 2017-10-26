@@ -24,11 +24,13 @@ public class MoveEnemy : MonoBehaviour {
         float x = newDirection.x;
         float y = newDirection.y;
         float rotationAngle = Mathf.Atan2(y, x) * 180 / Mathf.PI;
-        //3
-        GameObject sprite = (GameObject)
-            gameObject.transform.FindChild("Sprite").gameObject;
-        sprite.transform.rotation =
-            Quaternion.AngleAxis(rotationAngle, Vector3.forward);
+		//3
+		if (gameObject.transform.Find("Sprite") != null)
+		{
+			GameObject sprite = (GameObject)gameObject.transform.Find("Sprite").gameObject;
+			sprite.transform.rotation =
+				Quaternion.AngleAxis(rotationAngle, Vector3.forward);
+		}
     }
 
     // Update is called once per frame
@@ -40,8 +42,7 @@ public class MoveEnemy : MonoBehaviour {
 		float pathLength = Vector3.Distance (startPosition, endPosition);
 		float totalTimeForPath = pathLength / speed;
 		float currentTimeOnPath = Time.time - lastWaypointSwitchTime;
-
-        RotateIntoMoveDirection();
+ 
         gameObject.transform.position = Vector3.Lerp (startPosition, endPosition, currentTimeOnPath / totalTimeForPath);
 		// 3 
 		if (gameObject.transform.position.Equals(endPosition)) {
@@ -50,6 +51,7 @@ public class MoveEnemy : MonoBehaviour {
 				currentWaypoint++;
 				lastWaypointSwitchTime = Time.time;
 				// TODO: Rotate into move direction
+				RotateIntoMoveDirection();
 			} else {
 				// 5 Destroy enemy
 				Destroy(gameObject);
