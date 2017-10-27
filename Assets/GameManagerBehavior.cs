@@ -10,7 +10,7 @@ public class GameManagerBehavior : MonoBehaviour {
   		get { return gold; }
   		set {
 			gold = value;
-    		goldLabel.GetComponent<Text>().text = "GOLD: " + gold;
+    		//goldLabel.GetComponent<Text>().text = "GOLD: " + gold;
 		}
 	}
 
