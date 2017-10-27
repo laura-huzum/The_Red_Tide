@@ -25,12 +25,15 @@ public class MoveEnemy : MonoBehaviour {
         float y = newDirection.y;
         float rotationAngle = Mathf.Atan2(y, x) * 180 / Mathf.PI;
 		//3
-		if (gameObject.transform.Find("Sprite") != null)
+		/*if (gameObject.transform.Find("RussianSprite") != null)
 		{
-			GameObject sprite = (GameObject)gameObject.transform.Find("Sprite").gameObject;
+            
+			GameObject sprite = (GameObject)gameObject.transform.Find("RussianSprite").gameObject;
 			sprite.transform.rotation =
 				Quaternion.AngleAxis(rotationAngle, Vector3.forward);
-		}
+		}*/
+        gameObject.transform.rotation = Quaternion.AngleAxis(rotationAngle, Vector3.forward);
+
     }
 
     // Update is called once per frame
