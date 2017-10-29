@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class MachineGunBehaviour : MonoBehaviour
 {
-
-    GameObject structure_prefab;
+    
+    public GameObject structure_prefab;
     GameObject structure;
     bool shooting_state;
 
