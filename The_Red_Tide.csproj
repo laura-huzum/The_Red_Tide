@@ -227,7 +227,6 @@
     <Compile Include="Assets\Scripts\GameOver.cs" />
     <Compile Include="Assets\Scripts\MachineGunBehaviour.cs" />
     <Compile Include="Assets\Scripts\PlaceStructure.cs" />
-    <Compile Include="Assets\Scripts\Tutorial.cs" />
     <Compile Include="Assets\SpawnEnemy.cs" />
   </ItemGroup>
   <ItemGroup>
