@@ -6,6 +6,7 @@ TagManager:
   tags:
   - GameOver
   - GameWon
+  - EnemyInfantry
   layers:
   - Default
   - TransparentFX

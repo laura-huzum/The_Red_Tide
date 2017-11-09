@@ -7,11 +7,11 @@ public class SpawnEnemy : MonoBehaviour {
 
 	public GameObject[] waypoints;
 	public GameObject Infantry;
-    private TimeSpan timestart;
+    //private TimeSpan timestart;
 
     // Use this for initialization
     void Start () {
-        timestart = DateTime.Now.TimeOfDay;
+        //timestart = DateTime.Now.TimeOfDay;
         Infantry.gameObject.tag = "EnemyInfantry";
         StartCoroutine(GenerateWave());
     }
