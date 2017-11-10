@@ -14,6 +14,9 @@ public class GameManagerBehavior : MonoBehaviour {
     public GameObject GameOverLabel;
     public bool gameOver = false;
 
+    int special_cost;
+    public GameObject special_indicator_prefab;
+
     private int wave;
     public int Wave
     {
@@ -75,6 +78,8 @@ public class GameManagerBehavior : MonoBehaviour {
         // for this level
         Health = 1;
 
+        // TODO: change this, we ain't bombin no one for free
+        special_cost = 0;
         GameOverLabel.SetActive(false);
 	}
 	
@@ -91,4 +96,18 @@ public class GameManagerBehavior : MonoBehaviour {
 
 	
 	}
+
+
+    public void buySpecial()
+    {
+        if (Reichsmark > special_cost)
+        {
+            // spawn a semitransparent rectangle (the AoEIndicator) that follows the cursor
+            // to indicate the area of effect.
+
+            Instantiate(special_indicator_prefab);
+        }
+    }
+
+
 }

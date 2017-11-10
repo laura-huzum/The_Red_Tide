@@ -90,4 +90,26 @@ public class MoveEnemy : MonoBehaviour {
             }
         }
 	}
+
+
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        // collision with either trap, or bombardment
+        Debug.Log("collision with bombardment");
+        BomberBehaviour bb = collision.gameObject.GetComponent<BomberBehaviour>();
+
+        if (bb == null)
+        {
+            // trap behaviour
+        }
+        else
+        {
+            hitpoints -= bb.bombardment_damage;
+        }
+
+
+    }
+
+
 }
