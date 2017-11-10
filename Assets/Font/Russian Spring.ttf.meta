@@ -1,0 +1,22 @@
+fileFormatVersion: 2
+guid: b41f7d553abb1124993361b8e57c3ee2
+timeCreated: 1510273181
+licenseType: Free
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Russian Spring
+  fontNames:
+  - Russian Spring
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

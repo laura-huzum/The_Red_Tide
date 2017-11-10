@@ -8,25 +8,35 @@ public class MachineGunBehaviour : MonoBehaviour
     
     public GameObject structure_prefab;
     GameObject structure;
+    private GameManagerBehavior gameManager;
+
     bool shooting_state;
     bool isColliding;
+
+
     private TimeSpan last_shot;
-    private TimeSpan interval = new TimeSpan(0,0,1);
+    private TimeSpan interval = new TimeSpan(0,0,0,0,1500); // 1500 ms
     private List<GameObject> enemyList;
     private double seconds_oldest_target;
     private GameObject target;
 
 
     // Use this for initialization
+    // Start is called when the object becomes part of the scene
     void Start()
     {
         seconds_oldest_target = 0;
-        gameObject.GetComponent<CircleCollider2D>().enabled = false;
+       
         enemyList = new List<GameObject>();
-
-
+        
     }
 
+    private void Awake()
+    {
+        gameManager = GameObject.Find("GameManager").GetComponent<GameManagerBehavior>();
+        gameObject.GetComponent<CircleCollider2D>().enabled = false;
+        shooting_state = false;
+    }
 
 
 
@@ -42,33 +52,78 @@ public class MachineGunBehaviour : MonoBehaviour
         {
             // shooting at stuff
             
-
-            
         }
 
+    }
+
+    public bool canUpgrade()
+    {
+        
+        WeaponData weaponData = gameObject.GetComponent<WeaponData>();
+        UpgradeLevel nextLevel = weaponData.getNextLevel();
+        if (nextLevel != null && gameManager.Reichsmark > nextLevel.cost)
+        {
+            return true;
+        }
+        else return false;
+        
+    }
+
+
+    private bool affordPlace()
+    {
+        if (gameManager == null)
+            Debug.Log("gameManager null in affordPlace; gameobject = " + gameObject);
+
+        int cost = gameObject.GetComponent<WeaponData>().levels[0].cost;
+        return gameManager.Reichsmark >= cost;
     }
 
 
     public void PlaceAction()
     {
+        structure = (GameObject) Instantiate(structure_prefab, Camera.main.ScreenToViewportPoint(Input.mousePosition), Quaternion.identity);
+        
+        GameManagerBehavior gameManagerTemp = structure.GetComponent<MachineGunBehaviour>().gameManager;
+        int place_cost = structure.GetComponent<WeaponData>().levels[0].cost;
 
-        structure = (GameObject)Instantiate(structure_prefab, Camera.main.ScreenToViewportPoint(Input.mousePosition), Quaternion.identity);
-        shooting_state = false;
 
+        if (gameManagerTemp.Reichsmark < place_cost)
+        {
+            // if cannot afford, destroy the object
+            Destroy(structure);
+        }
+        else
+        {
+            // deduct gold
+            gameManagerTemp.Reichsmark -= place_cost;
+        }
     }
 
-    void OnMouseDown()
+
+    private void OnMouseUp()
     {
 
+        
         if (!shooting_state && !isColliding)
         {
-            // object is being placed
+            // object can be placed on the position where the mouse is released
             shooting_state = true;
             gameObject.GetComponent<CircleCollider2D>().enabled = true;
+            //gameManager.Reichsmark -= gameObject.GetComponent<WeaponData>().CurrentLevel.cost;
         }
-
-
+        else
+        {
+            if (canUpgrade() && shooting_state)
+            {
+                gameObject.GetComponent<WeaponData>().upgrade();
+                // deduct gold
+                gameManager.Reichsmark -= gameObject.GetComponent<WeaponData>().CurrentLevel.cost;
+            }
+        }
     }
+
+
 
 
     void OnCollisionEnter2D(Collision2D collision)
@@ -83,13 +138,14 @@ public class MachineGunBehaviour : MonoBehaviour
             foreach (Transform child in transform)
             {
                 child.GetComponent<SpriteRenderer>().color = Color.red;
+                //Debug.Log(child);
             }
         else
         {
             if (collision.collider.gameObject.CompareTag("EnemyInfantry"))
             {
                 enemyList.Add(collision.collider.gameObject);
-                Debug.Log("Enemy list add " + enemyList.Count);
+                //Debug.Log("Enemy list add " + enemyList.Count);
             }
         }
 
@@ -111,7 +167,7 @@ public class MachineGunBehaviour : MonoBehaviour
         {
 
             enemyList.Remove(collision.collider.gameObject);//(collision.otherCollider.transform.parent.gameObject);
-            Debug.Log("Enemy list remove " + enemyList.Count);
+            //Debug.Log("Enemy list remove " + enemyList.Count);
         }
 
     }
@@ -119,35 +175,44 @@ public class MachineGunBehaviour : MonoBehaviour
 
     private void OnCollisionStay2D(Collision2D collision)
     {
-        if (shooting_state && enemyList.Count >= 1)
+        if (! gameManager.GetComponent<GameManagerBehavior>().gameOver)
         {
-            //get array of enemies
-            //collision.otherCollider.transform.parent.gameObject;
-
-            update_oldest_enemy();
-
-            if (DateTime.Now.TimeOfDay - last_shot > interval)
+            if (shooting_state && enemyList.Count >= 1)
             {
+                //get array of enemies
+                //collision.otherCollider.transform.parent.gameObject;
 
-                Debug.Log("shooting at this old boy: " + seconds_oldest_target);
-                last_shot = DateTime.Now.TimeOfDay;
-                // remove HP
-                MoveEnemy script = target.GetComponent<MoveEnemy>();
-                // replace with damage
-                script.hitpoints -= 1;
+                update_oldest_enemy();
+
+                if (DateTime.Now.TimeOfDay - last_shot > interval)
+                {
+
+                    //Debug.Log("shooting at this old boy: " + seconds_oldest_target);
+                    // play sound
+                    AudioSource audioSource = gameObject.GetComponent<AudioSource>();
+                    AudioSource.PlayClipAtPoint(audioSource.clip, transform.position);
+                    last_shot = DateTime.Now.TimeOfDay;
+
+                    // remove HP
+                    MoveEnemy script = target.GetComponent<MoveEnemy>();
+                    // replace with damage
+                    script.hitpoints -= 1;
 
 
-                Vector3 newStartPosition = gameObject.transform.position;
-                Vector3 newEndPosition = target.transform.position;
-                Vector3 newDirection = (newEndPosition - newStartPosition);
-                //2
-                float x = newDirection.x;
-                float y = newDirection.y;
-                float rotationAngle = Mathf.Atan2(y, x) * 180 / Mathf.PI;
-                gameObject.transform.Find("machine_gun_top_sprite").rotation = Quaternion.AngleAxis(rotationAngle, Vector3.forward);
+                    Vector3 newStartPosition = gameObject.transform.position;
+                    Vector3 newEndPosition = target.transform.position;
+                    Vector3 newDirection = (newEndPosition - newStartPosition);
+                    //2
+                    float x = newDirection.x;
+                    float y = newDirection.y;
+                    float rotationAngle = Mathf.Atan2(y, x) * 180 / Mathf.PI;
+                    // get proper level sprite
+                    GameObject current_level_sprite = gameObject.GetComponent<WeaponData>().CurrentLevel.visualization;
+                    current_level_sprite.transform.rotation = Quaternion.AngleAxis(rotationAngle, Vector3.forward);
+
+                }
 
             }
-
         }
     }
 
@@ -164,15 +229,12 @@ public class MachineGunBehaviour : MonoBehaviour
             if (enemyList[i] == null)
             {
                 enemyList.RemoveAt(i);
-                Debug.Log("Enemy list remove " + enemyList.Count);
+                //Debug.Log("Enemy list remove " + enemyList.Count);
                 i--;
             }
             else
             {
                 MoveEnemy script = enemyList[i].GetComponent<MoveEnemy>();
-
-                if (script == null)
-                    Debug.Log("fmm" + enemyList[i] + " instID: " + this.GetInstanceID());
                 double enemy_age_seconds = (now - script.spawnTime).TotalMilliseconds;
                 if (enemy_age_seconds > seconds_oldest_target)
                 {
