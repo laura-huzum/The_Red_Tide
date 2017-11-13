@@ -20,10 +20,12 @@ GameObject:
   m_Component:
   - component: {fileID: 4931500761647206}
   - component: {fileID: 212202144411479256}
-  - component: {fileID: 61031984917973822}
-  m_Layer: 0
+  - component: {fileID: 114964907908477324}
+  - component: {fileID: 50806734598934380}
+  - component: {fileID: 61007739313183404}
+  m_Layer: 8
   m_Name: Wall
-  m_TagString: Untagged
+  m_TagString: DefensiveStructure
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -35,13 +37,33 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1670474719615902}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.21, y: -1.57, z: 0}
-  m_LocalScale: {x: 0.06848109, y: 0.06848103, z: 1.3696207}
+  m_LocalPosition: {x: 3.34, y: -1.52, z: 0}
+  m_LocalScale: {x: 0.06848109, y: 0.06848103, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!61 &61031984917973822
+--- !u!50 &50806734598934380
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1670474719615902}
+  m_BodyType: 1
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 1
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 1
+  m_Constraints: 0
+--- !u!61 &61007739313183404
 BoxCollider2D:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -66,6 +88,18 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 8.740001, y: 21.78}
   m_EdgeRadius: 0
+--- !u!114 &114964907908477324
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1670474719615902}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 02aebe0674f055b40800e3f575f77bf4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hitpoints: 1
 --- !u!212 &212202144411479256
 SpriteRenderer:
   m_ObjectHideFlags: 1

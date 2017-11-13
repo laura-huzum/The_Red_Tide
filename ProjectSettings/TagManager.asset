@@ -8,6 +8,10 @@ TagManager:
   - GameWon
   - EnemyInfantry
   - CurrencyLabel
+  - Road
+  - Trap
+  - DefensiveStructure
+  - EnemyTank
   layers:
   - Default
   - TransparentFX
@@ -17,6 +21,8 @@ TagManager:
   - UI
   - 
   - 
+  - GroundBound
+  - HoverOver
   - 
   - 
   - 
@@ -34,9 +40,7 @@ TagManager:
   - 
   - 
   - 
-  - 
-  - 
-  - 
+  - MasterLayerNoTouchyBossGodnush
   - 
   - 
   - 

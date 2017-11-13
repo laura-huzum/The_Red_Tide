@@ -3,16 +3,13 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-public class MoveEnemy : MonoBehaviour {
+public class MoveEnemy : GenericEnemy {
+
 	[HideInInspector]
 	public GameObject[] waypoints;
 	private int currentWaypoint = 0;
 	private float lastWaypointSwitchTime;
-	public float speed = 1.0f;
-    public DateTime spawnTime;
-    public int hitpoints;
-    public int bounty;
-
+	
     // Use this for initialization
     void Start () {
 		lastWaypointSwitchTime = Time.time;
@@ -27,8 +24,19 @@ public class MoveEnemy : MonoBehaviour {
     {
         //1
         Vector3 newStartPosition = waypoints[currentWaypoint].transform.position;
-        Vector3 newEndPosition = waypoints[currentWaypoint + 1].transform.position;
+        Vector3 newEndPosition;
+
+        if (newStartPosition == waypoints[10].transform.position && GameObject.Find("Wall") == null
+            && gameObject.transform.position.y <= waypoints[10].transform.position.y)
+        {
+            newEndPosition = waypoints[currentWaypoint + 3].transform.position;
+        }
+        else
+        {
+            newEndPosition = waypoints[currentWaypoint + 1].transform.position;
+        }
         Vector3 newDirection = (newEndPosition - newStartPosition);
+
         //2
         float x = newDirection.x;
         float y = newDirection.y;
@@ -47,8 +55,20 @@ public class MoveEnemy : MonoBehaviour {
         {
             if (hitpoints > 0)
             {
+                
                 Vector3 startPosition = waypoints[currentWaypoint].transform.position;
-                Vector3 endPosition = waypoints[currentWaypoint + 1].transform.position;
+                Vector3 endPosition;
+
+                if (startPosition == waypoints[10].transform.position && GameObject.Find("Wall") == null
+                    && gameObject.transform.position.y <= waypoints[10].transform.position.y)
+                {
+                     endPosition = waypoints[currentWaypoint + 3].transform.position;
+                }
+                else
+                {
+                     endPosition = waypoints[currentWaypoint + 1].transform.position;
+                }
+
                 // 2 
                 float pathLength = Vector3.Distance(startPosition, endPosition);
                 float totalTimeForPath = pathLength / speed;
@@ -61,7 +81,11 @@ public class MoveEnemy : MonoBehaviour {
                     if (currentWaypoint < waypoints.Length - 2)
                     {
                         // 4 Switch to next waypoint
-                        currentWaypoint++;
+                        if (startPosition == waypoints[10].transform.position && GameObject.Find("Wall") == null
+                            && gameObject.transform.position.y <= waypoints[10].transform.position.y)
+                            currentWaypoint += 3;
+                        else currentWaypoint++;
+                        lastWaypointSwitchTime = Time.time;
                         lastWaypointSwitchTime = Time.time;
                         // rotate into move direction
                         RotateIntoMoveDirection();
@@ -96,12 +120,13 @@ public class MoveEnemy : MonoBehaviour {
     private void OnCollisionEnter2D(Collision2D collision)
     {
         // collision with either trap, or bombardment
-        Debug.Log("collision with bombardment");
+        //Debug.Log("collision with bombardment");
         BomberBehaviour bb = collision.gameObject.GetComponent<BomberBehaviour>();
 
         if (bb == null)
         {
             // trap behaviour
+
         }
         else
         {

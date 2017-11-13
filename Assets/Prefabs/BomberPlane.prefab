@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 82153946097193092}
   - component: {fileID: 114217572682515598}
   - component: {fileID: 50308766110872558}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: BomberPlane
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -38,7 +38,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4961347864120540}
   - component: {fileID: 212673060069648454}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Scorch2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -54,7 +54,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4979232155762138}
   - component: {fileID: 212419033575100584}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Scorch1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -70,7 +70,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4442198789298802}
   - component: {fileID: 212767194923519952}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Scorch3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -86,7 +86,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4786437230726462}
   - component: {fileID: 212336385354178486}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: bomberSprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -100,7 +100,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1086628179373308}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 20, y: 0, z: -1}
+  m_LocalPosition: {x: 20, y: 0, z: -3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4786437230726462}
@@ -130,7 +130,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1900929951290682}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -1, z: -2}
+  m_LocalPosition: {x: 20, y: 0, z: -3}
   m_LocalScale: {x: 0.65540594, y: 0.65540594, z: 1}
   m_Children: []
   m_Father: {fileID: 4099120104538638}

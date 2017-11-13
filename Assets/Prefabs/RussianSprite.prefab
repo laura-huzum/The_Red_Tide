@@ -24,7 +24,7 @@ GameObject:
   - component: {fileID: 82655555143167034}
   - component: {fileID: 50841366580997820}
   - component: {fileID: 61375246139881094}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: RussianSprite
   m_TagString: EnemyInfantry
   m_Icon: {fileID: 0}
@@ -38,7 +38,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1972604773947044}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -20, y: -20, z: -0.1}
+  m_LocalPosition: {x: -20, y: -1.5612593, z: -0.1}
   m_LocalScale: {x: 1.5, y: 1.5, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -62,7 +62,7 @@ Rigidbody2D:
   m_Material: {fileID: 0}
   m_Interpolate: 0
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 0
 --- !u!61 &61375246139881094
 BoxCollider2D:
@@ -76,7 +76,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: -0.10068565, y: 0.0028208196}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -87,7 +87,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 0.3138429, y: 0.49774963}
   m_EdgeRadius: 0
 --- !u!82 &82655555143167034
 AudioSource:
@@ -180,10 +180,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 08a43102e811041a89d9a47813ca3342, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  waypoints: []
-  speed: 2
-  hitpoints: 2
+  speed: 1
+  hitpoints: 3
   bounty: 0
+  damage: 0
+  waypoints: []
 --- !u!212 &212256647673242466
 SpriteRenderer:
   m_ObjectHideFlags: 1

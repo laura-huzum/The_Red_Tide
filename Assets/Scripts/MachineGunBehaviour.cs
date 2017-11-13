@@ -3,11 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MachineGunBehaviour : MonoBehaviour
+public class MachineGunBehaviour : GenericWeapon
 {
-    
-    public GameObject structure_prefab;
+
     GameObject structure;
+    public GameObject structure_prefab;
     private GameManagerBehavior gameManager;
 
     bool shooting_state;
@@ -19,6 +19,7 @@ public class MachineGunBehaviour : MonoBehaviour
     private List<GameObject> enemyList;
     private double seconds_oldest_target;
     private GameObject target;
+    bool toggle_collider = false;
 
 
     // Use this for initialization
@@ -43,15 +44,28 @@ public class MachineGunBehaviour : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        if (hitpoints <= 0)
+            Destroy(gameObject);
         if (!shooting_state)
         {
             gameObject.transform.position = Vector2.Lerp(transform.position, Camera.main.ScreenToWorldPoint(Input.mousePosition), 1);
+            gameObject.transform.position = new Vector3(gameObject.transform.position.x,
+                                                gameObject.transform.position.y,
+                                                -0.1f);
         }
         else
         {
-            // shooting at stuff
-            
+            // toggle the structure's circle collider corresponding to the phase of the game (placement or fight)
+            if (gameManager.GetComponent<GameManagerBehavior>().wave_fight && !toggle_collider)
+            {
+                gameObject.GetComponent<CircleCollider2D>().enabled = true;
+                toggle_collider = true;
+            }
+            else if (!gameManager.GetComponent<GameManagerBehavior>().wave_fight && toggle_collider)
+            {
+                gameObject.GetComponent<CircleCollider2D>().enabled = false;
+                toggle_collider = false;
+            }
         }
 
     }
@@ -96,6 +110,7 @@ public class MachineGunBehaviour : MonoBehaviour
         else
         {
             // deduct gold
+            structure.layer = LayerMask.NameToLayer("HoverOver");
             gameManagerTemp.Reichsmark -= place_cost;
         }
     }
@@ -109,17 +124,28 @@ public class MachineGunBehaviour : MonoBehaviour
         {
             // object can be placed on the position where the mouse is released
             shooting_state = true;
-            gameObject.GetComponent<CircleCollider2D>().enabled = true;
+            //gameObject.GetComponent<CircleCollider2D>().enabled = true;
+            gameObject.layer = LayerMask.NameToLayer("GroundBound");
             //gameManager.Reichsmark -= gameObject.GetComponent<WeaponData>().CurrentLevel.cost;
         }
         else
         {
-            if (canUpgrade() && shooting_state)
-            {
-                gameObject.GetComponent<WeaponData>().upgrade();
-                // deduct gold
-                gameManager.Reichsmark -= gameObject.GetComponent<WeaponData>().CurrentLevel.cost;
-            }
+            // check if the click is on box collider
+            BoxCollider2D gun_base = gameObject.GetComponent<BoxCollider2D>();
+            Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            Vector2 down_left_corner = new Vector2(gameObject.transform.position.x - gun_base.size.x / 2,
+                                                    gameObject.transform.position.y - gun_base.size.y / 2);
+            Vector2 up_right_corner = new Vector2(gameObject.transform.position.x + gun_base.size.x / 2,
+                                                    gameObject.transform.position.y + gun_base.size.y / 2);
+            if (mousePosition.x > down_left_corner.x && mousePosition.y > down_left_corner.y &&
+                mousePosition.x < up_right_corner.x && mousePosition.y < up_right_corner.y) {
+                if (canUpgrade() && shooting_state)
+                {
+                    gameObject.GetComponent<WeaponData>().upgrade();
+                    // deduct gold
+                    gameManager.Reichsmark -= gameObject.GetComponent<WeaponData>().CurrentLevel.cost;
+                }
+           }
         }
     }
 
@@ -194,9 +220,9 @@ public class MachineGunBehaviour : MonoBehaviour
                     last_shot = DateTime.Now.TimeOfDay;
 
                     // remove HP
-                    MoveEnemy script = target.GetComponent<MoveEnemy>();
+                    GenericEnemy script = target.GetComponent<GenericEnemy>();
                     // replace with damage
-                    script.hitpoints -= 1;
+                    script.hitpoints -= damage;
 
 
                     Vector3 newStartPosition = gameObject.transform.position;
@@ -225,16 +251,16 @@ public class MachineGunBehaviour : MonoBehaviour
 
         for (int i = 0; i < enemyList.Count; i++)
         {
-            //Debug.Log("i=" + i);
             if (enemyList[i] == null)
             {
                 enemyList.RemoveAt(i);
-                //Debug.Log("Enemy list remove " + enemyList.Count);
                 i--;
             }
             else
             {
-                MoveEnemy script = enemyList[i].GetComponent<MoveEnemy>();
+
+                GenericEnemy script = enemyList[i].GetComponent<GenericEnemy>();
+
                 double enemy_age_seconds = (now - script.spawnTime).TotalMilliseconds;
                 if (enemy_age_seconds > seconds_oldest_target)
                 {

@@ -17,11 +17,16 @@ public class IndicatorBehaviour : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        
         gameObject.transform.position = Vector2.Lerp(transform.position, Camera.main.ScreenToWorldPoint(Input.mousePosition), 1);
+        gameObject.transform.position = new Vector3(gameObject.transform.position.x,
+                                                gameObject.transform.position.y,
+                                                -3);
     }
 
     private void OnMouseUp()
     {
+        Debug.Log("click");
         // instantiate bomber 
         // collider fixed in an area
         BoxCollider2D area_of_effect = gameObject.GetComponent<BoxCollider2D>();

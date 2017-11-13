@@ -20,7 +20,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4294220269795630}
   - component: {fileID: 212384966560708630}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: machine_gun_top_sprite_0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -41,9 +41,9 @@ GameObject:
   - component: {fileID: 61761024655678198}
   - component: {fileID: 58714258076084354}
   - component: {fileID: 82995427715608942}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: machineGunPrefab
-  m_TagString: Untagged
+  m_TagString: DefensiveStructure
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -57,7 +57,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4385134745532932}
   - component: {fileID: 212450842069814324}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: machine_gun_top_sprite_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -73,7 +73,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4116702230604600}
   - component: {fileID: 212067881086843224}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: machine_gun_base_sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -89,7 +89,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4603029247140084}
   - component: {fileID: 212216941120168214}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: machine_gun_top_sprite_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -316,6 +316,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b8a76b6a9d1a2441b1d67b844965334, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hitpoints: 5
+  damage: 1
   structure_prefab: {fileID: 1466781626919634}
 --- !u!114 &114558611859887428
 MonoBehaviour:
