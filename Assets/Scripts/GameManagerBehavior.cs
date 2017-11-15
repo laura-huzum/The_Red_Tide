@@ -19,13 +19,17 @@ public class GameManagerBehavior : MonoBehaviour {
     public bool wave_fight = false;
     public bool changed_colors = false;
 
-    int special_cost;
-    int trap_cost;
-    int tower_cost;
+    public int special_cost;
+    public int trap_cost;
+    public int tower_cost;
     public GameObject special_indicator_prefab;
-    public GameObject trap_prefab;
+    public GameObject machinegun_prefab;
     public GameObject tower_prefab;
+    public GameObject trap_prefab;   
     public GameObject wall_prefab;
+    public GameObject quitPrompt;
+
+    //======================================================
 
     private int wave;
     public int Wave
@@ -38,7 +42,7 @@ public class GameManagerBehavior : MonoBehaviour {
             // TODO: display "START WAVE" message
 
         
-            WaveCountLabel.text = "WAVE: " + (wave + 1);
+            WaveCountLabel.text = "WAVE: " + (wave);
         }
     }
 
@@ -52,18 +56,17 @@ public class GameManagerBehavior : MonoBehaviour {
             if (value < health)
             {
                 // if currently assigned health is greater than the update (aka damage taken)
+                // APPLIABLE ONLY IF OBJECTIVE HAS MORE THAN 1 HITPOINT
+                // like some sort of damage-taking effect
             }
             // 2
             health = value;
-            //healthLabel.text = "HEALTH: " + health;
             // 3
             if (health <= 0 && !gameOver)
             {
                 gameOver = true;
                 GameOverLabel.SetActive(true);
                 // TODO: replace nazi flag with commie flag
-                //GameObject gameOverText = GameObject.FindGameObjectWithTag("GameOver");
-                //gameOverText.GetComponent<Animator>().SetBool("gameOver", true);
             }
             
 
@@ -80,19 +83,37 @@ public class GameManagerBehavior : MonoBehaviour {
         }
     }
 
-	// Use this for initialization
-	void Start () {
+
+
+    //======================================================
+
+
+
+    // Use this for initialization
+    void Start () {
 		Reichsmark = 750;
         Wave = 0;
         // for this level
         Health = 1;
 
-        // TODO: change this, we ain't bombin no one for free
-        special_cost = 0;
         GameOverLabel.SetActive(false);
         Instantiate(wall_prefab).name = "Wall";
+
+        if (Game.current == null)
+        {
+            Game.current = new Game();
+            Debug.Log("new Game");
+        }
+        else
+        {
+            // LOAD GAME DATA
+            // wave, money, structures
+            loadSavedGameData();
+        }
 	}
 	
+
+
 	// Update is called once per frame
 	void Update () {
 
@@ -146,13 +167,12 @@ public class GameManagerBehavior : MonoBehaviour {
         {
             // spawn a semitransparent rectangle (the AoEIndicator) that follows the cursor
             // to indicate the area of effect.
-
             Instantiate(special_indicator_prefab);
             
         }
         else
         {
-            // flash red
+            // flash red, can't afford
         }
     }
 
@@ -166,13 +186,10 @@ public class GameManagerBehavior : MonoBehaviour {
             }
             else
             {
-                //flash red
+                //flash red, can't afford
             }
         }
-        else
-        {
-            // redden button
-        }
+
 
     }
 
@@ -188,10 +205,60 @@ public class GameManagerBehavior : MonoBehaviour {
                 //flash red
             }
         }
-        else
+    }
+
+
+    public void promptQuit()
+    {
+        quitPrompt.SetActive(true);
+    }
+
+
+
+    public void loadSavedGameData()
+    {
+
+        this.Wave = Game.current.wave_number;
+        this.Reichsmark = Game.current.reicshmark_count;
+        GameObject tmp;
+        GenericWeapon wep;
+        foreach (StructureData strucdata in Game.current.machineguns)
         {
-            // redden button
+            tmp = Instantiate(machinegun_prefab);
+            wep = tmp.GetComponent<MachineGunBehaviour>();
+            wep.shooting_state = true;
+            tmp.layer = LayerMask.NameToLayer("Default");
+            WeaponData wd = tmp.GetComponent<WeaponData>();
+            wd.CurrentLevel = wd.levels[strucdata.upgrade_level];
+            tmp.transform.position = new Vector3(strucdata.position[0], strucdata.position[1], strucdata.position[2]);
+            wep.hitpoints = strucdata.hitpoints;
+
         }
+
+        foreach (StructureData strucdata in Game.current.bigtowers)
+        {
+            tmp = Instantiate(tower_prefab);
+            wep = tmp.GetComponent<BigTowerBehaviour>();
+            wep.shooting_state = true;
+            tmp.layer = LayerMask.NameToLayer("Default");
+
+            tmp.transform.position = new Vector3(strucdata.position[0], strucdata.position[1], strucdata.position[2]);
+            wep.hitpoints = strucdata.hitpoints;
+
+        }
+
+        foreach (StructureData strucdata in Game.current.traps)
+        {
+            tmp = Instantiate(trap_prefab);
+            wep = tmp.GetComponent<TrapBehaviour>();
+            wep.shooting_state = true;
+            tmp.layer = LayerMask.NameToLayer("Default");
+
+            tmp.transform.position = new Vector3(strucdata.position[0], strucdata.position[1], strucdata.position[2]);
+            wep.hitpoints = strucdata.hitpoints;
+
+        }
+
     }
 
 }

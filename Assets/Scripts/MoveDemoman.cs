@@ -144,15 +144,18 @@ public class MoveDemoman : GenericEnemy
                             Debug.Log("Wall detected");
                             wscript = collision.gameObject.GetComponent<WallBehaviour>();
                             wscript.hitpoints -= damage;
+                            
                         }
                         else
                         {
                             mgscript.hitpoints -= damage;
+
                         }
                     }
                     else
                     {
                         bscript.hitpoints -= damage;
+
                     }
                 }
             }

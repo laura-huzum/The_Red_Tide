@@ -4,33 +4,22 @@ using System.Collections.Generic;
 
 [System.Serializable]
 public class UpgradeLevel {
-  public int cost;
-  public GameObject visualization;
+    public int cost;
+    public GameObject visualization;
+  
 }
 
 public class WeaponData : MonoBehaviour {
 
 	public List<UpgradeLevel> levels;
 	private UpgradeLevel currentLevel;
-
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
+    [HideInInspector]
+    public int curr_level;
 
     private void Awake()
     {
         CurrentLevel = levels[0];
-    }
-
-    void OnEnable()
-    {
-        
+        curr_level = 0;
     }
 
     //1
@@ -72,6 +61,7 @@ public class WeaponData : MonoBehaviour {
 		int currentLevelIndex = levels.IndexOf(currentLevel);
 		if (currentLevelIndex < levels.Count - 1) {
 			CurrentLevel = levels[currentLevelIndex + 1];
+            curr_level++;
 		}
 	}
 }

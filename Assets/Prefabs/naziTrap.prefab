@@ -180,8 +180,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 060dc9aa55375ec4c995141a978f95a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  trap_damage: 1
-  uses: 5
+  hitpoints: 5
+  damage: 10
 --- !u!212 &212809450626523084
 SpriteRenderer:
   m_ObjectHideFlags: 1

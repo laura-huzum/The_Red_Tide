@@ -7,7 +7,6 @@ public class BigTowerBehaviour : GenericWeapon
 {
 
 
-    bool shooting_state;
     bool isColliding;
 
 
@@ -76,20 +75,10 @@ public class BigTowerBehaviour : GenericWeapon
 
         if (!shooting_state && !isColliding)
         {
-            // object can be placed on the position where the mouse is released
+            // placed object
             shooting_state = true;
-            //gameObject.GetComponent<CircleCollider2D>().enabled = true;
-            gameObject.layer = LayerMask.NameToLayer("GroundBound");
-            //gameManager.Reichsmark -= gameObject.GetComponent<WeaponData>().CurrentLevel.cost;
-        }
-        else
-        {
-            /*if (canUpgrade() && shooting_state)
-            {
-                gameObject.GetComponent<WeaponData>().upgrade();
-                // deduct gold
-                gameManager.Reichsmark -= gameObject.GetComponent<WeaponData>().CurrentLevel.cost;
-            }*/
+            gameObject.layer = LayerMask.NameToLayer("Default");
+    
         }
     }
 

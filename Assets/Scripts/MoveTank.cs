@@ -56,6 +56,7 @@ public class MoveTank : GenericEnemy
                 // 2 
                 float pathLength = Vector3.Distance(startPosition, endPosition);
                 float totalTimeForPath = pathLength / speed;
+                // TODO: it rushes if it spends too much time between the same waypoints
                 float currentTimeOnPath = Time.time - lastWaypointSwitchTime;
 
                 if (moves)
@@ -131,32 +132,36 @@ public class MoveTank : GenericEnemy
 
     private void OnCollisionStay2D(Collision2D collision)
     {
-        if (DateTime.Now.TimeOfDay - last_shot > interval)
+        // if collided with a defensive structure that is not a trap
+        if (collision.collider.gameObject.GetComponent<GenericWeapon>()!= null
+            && collision.collider.gameObject.GetComponent<TrapBehaviour>() == null)
         {
+            if (DateTime.Now.TimeOfDay - last_shot > interval)
+            {
 
-            //Debug.Log("shooting at this old boy: " + seconds_oldest_target);
-            // play sound
-            AudioSource audioSource = gameObject.GetComponent<AudioSource>();
-            AudioSource.PlayClipAtPoint(audioSource.clip, transform.position);
-            last_shot = DateTime.Now.TimeOfDay;
+                //Debug.Log("shooting at this old boy: " + seconds_oldest_target);
+                // play sound
+                AudioSource audioSource = gameObject.GetComponent<AudioSource>();
+                AudioSource.PlayClipAtPoint(audioSource.clip, transform.position);
+                last_shot = DateTime.Now.TimeOfDay;
 
-            // remove HP
-            GenericWeapon script = target.GetComponent<GenericWeapon>();
-            // replace with damage
-            script.hitpoints -= damage;
+                // remove HP
+                GenericWeapon script = target.GetComponent<GenericWeapon>();
+                // replace with damage
+                script.hitpoints -= damage;
 
 
-            Vector3 newStartPosition = gameObject.transform.position;
-            Vector3 newEndPosition = target.transform.position;
-            Vector3 newDirection = (newEndPosition - newStartPosition);
-            //2
-            float x = newDirection.x;
-            float y = newDirection.y;
-            float rotationAngle = Mathf.Atan2(y, x) * 180 / Mathf.PI;
-            // get proper level sprite
-            
-            transform.Find("tank_top").rotation = Quaternion.AngleAxis(rotationAngle, Vector3.forward);
+                Vector3 newStartPosition = gameObject.transform.position;
+                Vector3 newEndPosition = target.transform.position;
+                Vector3 newDirection = (newEndPosition - newStartPosition);
+                //2
+                float x = newDirection.x;
+                float y = newDirection.y;
+                float rotationAngle = Mathf.Atan2(y, x) * 180 / Mathf.PI;
 
+                transform.Find("tank_top").rotation = Quaternion.AngleAxis(rotationAngle, Vector3.forward);
+
+            }
         }
     }
 }

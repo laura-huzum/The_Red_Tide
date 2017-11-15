@@ -12,6 +12,7 @@ TagManager:
   - Trap
   - DefensiveStructure
   - EnemyTank
+  - GameSlot
   layers:
   - Default
   - TransparentFX

@@ -10,7 +10,6 @@ public class MachineGunBehaviour : GenericWeapon
     public GameObject structure_prefab;
     private GameManagerBehavior gameManager;
 
-    bool shooting_state;
     bool isColliding;
 
 
@@ -27,7 +26,6 @@ public class MachineGunBehaviour : GenericWeapon
     void Start()
     {
         seconds_oldest_target = 0;
-       
         enemyList = new List<GameObject>();
         
     }
@@ -124,9 +122,9 @@ public class MachineGunBehaviour : GenericWeapon
         {
             // object can be placed on the position where the mouse is released
             shooting_state = true;
-            //gameObject.GetComponent<CircleCollider2D>().enabled = true;
-            gameObject.layer = LayerMask.NameToLayer("GroundBound");
-            //gameManager.Reichsmark -= gameObject.GetComponent<WeaponData>().CurrentLevel.cost;
+            gameObject.layer = LayerMask.NameToLayer("Default");
+            // add to current game data
+
         }
         else
         {
