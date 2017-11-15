@@ -239,7 +239,7 @@
     <Compile Include="Assets\Scripts\MoveTank.cs" />
     <Compile Include="Assets\Scripts\QuitSavePrompt.cs" />
     <Compile Include="Assets\Scripts\SaveLoad.cs" />
-    <Compile Include="Assets\Scripts\SpawnEnemy.cs" />
+    <Compile Include="Assets\Scripts\SpawnStage.cs" />
     <Compile Include="Assets\Scripts\StructureData.cs" />
     <Compile Include="Assets\Scripts\TrapBehaviour.cs" />
     <Compile Include="Assets\Scripts\WallBehaviour.cs" />

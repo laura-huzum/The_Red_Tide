@@ -11,6 +11,7 @@ public class IndicatorBehaviour : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        Debug.Log("Here, object was instantiated");
         //gameObject.transform.position = Vector2.Lerp(transform.position, Camera.main.ScreenToWorldPoint(Input.mousePosition), 1);
     }
 
@@ -21,12 +22,13 @@ public class IndicatorBehaviour : MonoBehaviour
         gameObject.transform.position = Vector2.Lerp(transform.position, Camera.main.ScreenToWorldPoint(Input.mousePosition), 1);
         gameObject.transform.position = new Vector3(gameObject.transform.position.x,
                                                 gameObject.transform.position.y,
-                                                -3);
+                                                -8);
+
     }
 
     private void OnMouseUp()
     {
-        Debug.Log("click");
+        
         // instantiate bomber 
         // collider fixed in an area
         BoxCollider2D area_of_effect = gameObject.GetComponent<BoxCollider2D>();

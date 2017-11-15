@@ -6,13 +6,6 @@ public class WallBehaviour : MonoBehaviour
 
     public int hitpoints;
 
-
-    // Use this for initialization
-    void Start()
-    {
-
-    }
-
     // Update is called once per frame
     void Update()
     {
@@ -21,8 +14,8 @@ public class WallBehaviour : MonoBehaviour
     }
 
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    /*private void OnCollisionEnter2D(Collision2D collision)
     {
         Debug.Log("wall detecting collision");
-    }
+    }*/
 }

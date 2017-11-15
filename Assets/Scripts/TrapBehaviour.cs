@@ -11,6 +11,7 @@ public class TrapBehaviour : GenericWeapon
     void Start()
     {
         gameObject.layer = LayerMask.NameToLayer("HoverOver");
+        gameObject.GetComponent<SpriteRenderer>().color = Color.red;
     }
 
     // Update is called once per frame
@@ -19,11 +20,10 @@ public class TrapBehaviour : GenericWeapon
         
         if (!shooting_state)
         {
-            Debug.Log("Trap being placed but why tho");
             gameObject.transform.position = Vector2.Lerp(transform.position, Camera.main.ScreenToWorldPoint(Input.mousePosition), 1);
             gameObject.transform.position = new Vector3(gameObject.transform.position.x,
                                                 gameObject.transform.position.y,
-                                                -0.1f);
+                                                1);
         }
         if (hitpoints <= 0)
             Destroy(gameObject);
@@ -33,40 +33,74 @@ public class TrapBehaviour : GenericWeapon
     private void OnCollisionEnter2D(Collision2D collision)
     {
         //Debug.Log("collision detected");
-        if (collision.collider.gameObject.CompareTag("Road"))
+
+        if (!shooting_state)
         {
-            onRoad = true;
-            gameObject.GetComponent<SpriteRenderer>().color = Color.white;
+            if (collision.collider.gameObject.CompareTag("Road"))
+            {
+                onRoad = true;
+            }
+            if (collision.collider.gameObject.CompareTag("Trap"))
+            {
+
+                onTrap = true;
+            }
+
+            if (onTrap || !onRoad)
+            {
+                gameObject.GetComponent<SpriteRenderer>().color = Color.red;
+            }
+            else if (!onTrap && onRoad)
+            {
+                gameObject.GetComponent<SpriteRenderer>().color = Color.white;
+            }
         }
-        else if(collision.collider.gameObject.CompareTag("Trap")) {
-            onTrap = true;
-            gameObject.GetComponent<SpriteRenderer>().color = Color.red;
-        }
-        else if (shooting_state && collision.collider.gameObject.CompareTag("EnemyInfantry"))
+        else if (collision.collider.gameObject.CompareTag("EnemyInfantry"))
         {
             //Debug.Log(collision.gameObject);
 
             gameObject.GetComponent<AudioSource>().Play();
-            collision.collider.gameObject.GetComponent<MoveEnemy>().hitpoints -= damage;
+            collision.collider.gameObject.GetComponent<GenericEnemy>().hitpoints -= damage;
             hitpoints -= 1;
             // change color for 0.1s
             gameObject.GetComponent<SpriteRenderer>().color = Color.yellow;
             Invoke("whiten", 0.5f);
         }
 
+        else if (collision.collider.gameObject.CompareTag("EnemyTank"))
+        {   // tanks remove traps without taking damage
+            //Debug.Log(collision.gameObject);
+
+            gameObject.GetComponent<AudioSource>().Play();
+            //collision.collider.gameObject.GetComponent<MoveTank>().hitpoints -= damage;
+            hitpoints = 0 ;
+            
+        }
+
     }
 
     private void OnCollisionExit2D(Collision2D collision)
     {
-        if (collision.collider.gameObject.CompareTag("Road"))
+        if (!shooting_state)
         {
-            onRoad = false;
-            gameObject.GetComponent<SpriteRenderer>().color = Color.red;
-        }
-        else if (collision.collider.gameObject.CompareTag("Trap"))
-        {
-            onTrap = false;
-            gameObject.GetComponent<SpriteRenderer>().color = Color.white;
+            if (collision.collider.gameObject.CompareTag("Road"))
+            {
+                onRoad = false;
+            }
+            if (collision.collider.gameObject.CompareTag("Trap"))
+            {
+
+                onTrap = false;
+            }
+
+            if (onTrap || !onRoad)
+            {
+                gameObject.GetComponent<SpriteRenderer>().color = Color.red;
+            }
+            else if (!onTrap && onRoad)
+            {
+                gameObject.GetComponent<SpriteRenderer>().color = Color.white;
+            }
         }
     }
 
@@ -74,7 +108,7 @@ public class TrapBehaviour : GenericWeapon
     private void OnMouseUp()
     {
         //Debug.Log("click");
-        Debug.Log("onRoad = " + onRoad + " onTrap = " + onTrap);
+        //Debug.Log("onRoad = " + onRoad + " onTrap = " + onTrap);
         if (!shooting_state && onRoad && !onTrap)
         {
             shooting_state = true;

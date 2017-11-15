@@ -155,7 +155,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1466781626919634}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -20, y: -20, z: -0.1}
+  m_LocalPosition: {x: -20, y: -1.3430594, z: -0.1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4116702230604600}
@@ -318,7 +318,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hitpoints: 5
   damage: 1
+  shooting_state: 0
   structure_prefab: {fileID: 1466781626919634}
+  buyMG_button: {fileID: 0}
 --- !u!114 &114558611859887428
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -337,6 +339,7 @@ MonoBehaviour:
     visualization: {fileID: 1941327120330712}
   - cost: 300
     visualization: {fileID: 1785699219671156}
+  curr_level: 0
 --- !u!212 &212067881086843224
 SpriteRenderer:
   m_ObjectHideFlags: 1

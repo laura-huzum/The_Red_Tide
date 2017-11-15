@@ -2,12 +2,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MachineGunBehaviour : GenericWeapon
 {
 
     GameObject structure;
     public GameObject structure_prefab;
+  
     private GameManagerBehavior gameManager;
 
     bool isColliding;
@@ -16,7 +18,7 @@ public class MachineGunBehaviour : GenericWeapon
     private TimeSpan last_shot;
     private TimeSpan interval = new TimeSpan(0,0,0,0,1500); // 1500 ms
     private List<GameObject> enemyList;
-    private double seconds_oldest_target;
+    
     private GameObject target;
     bool toggle_collider = false;
 
@@ -25,7 +27,6 @@ public class MachineGunBehaviour : GenericWeapon
     // Start is called when the object becomes part of the scene
     void Start()
     {
-        seconds_oldest_target = 0;
         enemyList = new List<GameObject>();
         
     }
@@ -54,12 +55,12 @@ public class MachineGunBehaviour : GenericWeapon
         else
         {
             // toggle the structure's circle collider corresponding to the phase of the game (placement or fight)
-            if (gameManager.GetComponent<GameManagerBehavior>().wave_fight && !toggle_collider)
+            if (gameManager.GetComponent<GameManagerBehavior>().stage_fight && !toggle_collider)
             {
                 gameObject.GetComponent<CircleCollider2D>().enabled = true;
                 toggle_collider = true;
             }
-            else if (!gameManager.GetComponent<GameManagerBehavior>().wave_fight && toggle_collider)
+            else if (!gameManager.GetComponent<GameManagerBehavior>().stage_fight && toggle_collider)
             {
                 gameObject.GetComponent<CircleCollider2D>().enabled = false;
                 toggle_collider = false;
@@ -73,7 +74,7 @@ public class MachineGunBehaviour : GenericWeapon
         
         WeaponData weaponData = gameObject.GetComponent<WeaponData>();
         UpgradeLevel nextLevel = weaponData.getNextLevel();
-        if (nextLevel != null && gameManager.Reichsmark > nextLevel.cost)
+        if (nextLevel != null && gameManager.Reichsmark > nextLevel.cost && !gameManager.stage_fight)
         {
             return true;
         }
@@ -84,15 +85,13 @@ public class MachineGunBehaviour : GenericWeapon
 
     private bool affordPlace()
     {
-        if (gameManager == null)
-            Debug.Log("gameManager null in affordPlace; gameobject = " + gameObject);
 
         int cost = gameObject.GetComponent<WeaponData>().levels[0].cost;
         return gameManager.Reichsmark >= cost;
     }
 
 
-    public void PlaceAction()
+    /*public void PlaceAction()
     {
         structure = (GameObject) Instantiate(structure_prefab, Camera.main.ScreenToViewportPoint(Input.mousePosition), Quaternion.identity);
         
@@ -104,6 +103,7 @@ public class MachineGunBehaviour : GenericWeapon
         {
             // if cannot afford, destroy the object
             Destroy(structure);
+            
         }
         else
         {
@@ -111,7 +111,7 @@ public class MachineGunBehaviour : GenericWeapon
             structure.layer = LayerMask.NameToLayer("HoverOver");
             gameManagerTemp.Reichsmark -= place_cost;
         }
-    }
+    }*/
 
 
     private void OnMouseUp()
@@ -207,10 +207,11 @@ public class MachineGunBehaviour : GenericWeapon
                 //collision.otherCollider.transform.parent.gameObject;
 
                 update_oldest_enemy();
+               
 
                 if (DateTime.Now.TimeOfDay - last_shot > interval)
                 {
-
+                    //Debug.Log(target);
                     //Debug.Log("shooting at this old boy: " + seconds_oldest_target);
                     // play sound
                     AudioSource audioSource = gameObject.GetComponent<AudioSource>();
@@ -237,6 +238,15 @@ public class MachineGunBehaviour : GenericWeapon
                 }
 
             }
+            else if (!shooting_state)
+            {
+                // still colliding with something
+                isColliding = true;
+                foreach (Transform child in transform)
+                {
+                    child.GetComponent<SpriteRenderer>().color = Color.red;
+                }
+            }
         }
     }
 
@@ -244,8 +254,11 @@ public class MachineGunBehaviour : GenericWeapon
 
     private void update_oldest_enemy()
     {
-        seconds_oldest_target = 0;
+        double seconds_oldest_target = 0;
         DateTime now = DateTime.Now;
+        bool haveDemoman = false;
+        double enemy_age_seconds;
+        GenericEnemy script;
 
         for (int i = 0; i < enemyList.Count; i++)
         {
@@ -256,11 +269,22 @@ public class MachineGunBehaviour : GenericWeapon
             }
             else
             {
+                script = enemyList[i].GetComponent<GenericEnemy>();
+                enemy_age_seconds = (now - script.spawnTime).TotalMilliseconds;
 
-                GenericEnemy script = enemyList[i].GetComponent<GenericEnemy>();
+                if (enemyList[i].name.Contains("Demo"))
+                { //prioritize demoman
+                    haveDemoman = true;
+                    seconds_oldest_target = enemy_age_seconds;
+                }
 
-                double enemy_age_seconds = (now - script.spawnTime).TotalMilliseconds;
-                if (enemy_age_seconds > seconds_oldest_target)
+                //enemy_age_seconds = (now - script.spawnTime).TotalMilliseconds;
+                if (!haveDemoman && enemy_age_seconds > seconds_oldest_target)
+                {
+                    seconds_oldest_target = enemy_age_seconds;
+                    target = enemyList[i];
+                }
+                else if (haveDemoman && enemyList[i].name.Contains("Demo") && enemy_age_seconds >= seconds_oldest_target)
                 {
                     seconds_oldest_target = enemy_age_seconds;
                     target = enemyList[i];
@@ -268,5 +292,6 @@ public class MachineGunBehaviour : GenericWeapon
             }
         }
     }
+
 
 }

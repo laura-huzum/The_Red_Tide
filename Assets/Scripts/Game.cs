@@ -12,7 +12,7 @@ public class Game
     public List<StructureData> bigtowers;
     public List<StructureData> machineguns;
     public List<StructureData> traps;
-    public int wave_number;
+    public int stage_number;
     public int level;
     public int reicshmark_count;
 

@@ -52,12 +52,12 @@ public class BigTowerBehaviour : GenericWeapon
         else
         {
             // toggle the structure's circle collider corresponding to the phase of the game (placement or fight)
-            if (gameManager.GetComponent<GameManagerBehavior>().wave_fight && !toggle_collider)
+            if (gameManager.GetComponent<GameManagerBehavior>().stage_fight && !toggle_collider)
             {
                 gameObject.GetComponent<CircleCollider2D>().enabled = true;
                 toggle_collider = true;
             }
-            else if (!gameManager.GetComponent<GameManagerBehavior>().wave_fight && toggle_collider)
+            else if (!gameManager.GetComponent<GameManagerBehavior>().stage_fight && toggle_collider)
             {
                 gameObject.GetComponent<CircleCollider2D>().enabled = false;
                 toggle_collider = false;
@@ -87,6 +87,9 @@ public class BigTowerBehaviour : GenericWeapon
         //Debug.Log("Collision entered");
         isColliding = true;
 
+        /*if (collision.collider.CompareTag("DefensiveStructure"))
+            Debug.Log("colliding with another building");*/
+        // Debug.Log(collision.collider.gameObject.name);
         // the transform member, although not initialized in the behavioural script,
         // is a member of the GameObject class, and it is tied to the GameObject to 
         // which the script is assigned.
@@ -135,6 +138,7 @@ public class BigTowerBehaviour : GenericWeapon
 
     private void OnCollisionStay2D(Collision2D collision)
     {
+
         if (!gameManager.GetComponent<GameManagerBehavior>().gameOver)
         {
             if (shooting_state && enemyList.Count >= 1)
@@ -172,6 +176,15 @@ public class BigTowerBehaviour : GenericWeapon
 
                 }
 
+            }
+            else if (!shooting_state)
+            {
+                // still colliding with something
+                isColliding = true;
+                foreach (Transform child in transform)
+                {
+                    child.GetComponent<SpriteRenderer>().color = Color.red;
+                }
             }
         }
     }

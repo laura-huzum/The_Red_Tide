@@ -133,11 +133,11 @@ public class MoveTank : GenericEnemy
     private void OnCollisionStay2D(Collision2D collision)
     {
         // if collided with a defensive structure that is not a trap
-        if (collision.collider.gameObject.GetComponent<GenericWeapon>()!= null
-            && collision.collider.gameObject.GetComponent<TrapBehaviour>() == null)
+        if (collision.collider.gameObject.GetComponent<GenericWeapon>()!= null)
         {
-            if (DateTime.Now.TimeOfDay - last_shot > interval)
+            if (DateTime.Now.TimeOfDay - last_shot > interval )
             {
+                Debug.Log("tank shooting at nothing" + collision.collider.gameObject.name);
 
                 //Debug.Log("shooting at this old boy: " + seconds_oldest_target);
                 // play sound

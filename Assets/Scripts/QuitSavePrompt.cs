@@ -49,8 +49,8 @@ public class QuitSavePrompt : MonoBehaviour
         }
 
 
-        Game.current.reicshmark_count = gmb.Reichsmark;
-        Game.current.wave_number = gmb.Wave;
+        Game.current.reicshmark_count = gmb.reichsmark_stage_start;
+        Game.current.stage_number = gmb.Stage;
         Game.current.level = 1;
 
         // now call SAVE to save this Game in the file
@@ -58,72 +58,50 @@ public class QuitSavePrompt : MonoBehaviour
 
         //SceneManager.LoadScene("MainMenu");
         SceneManager.LoadScene(0);
+    }
 
-        /*if (Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.WindowsEditor)
+    public void continueEndless()
+    {
+        gamemanager.GetComponent<GameManagerBehavior>().continue_endless = true;
+        gameObject.SetActive(false);
+    }
+
+    public void Retry()
+    {
+        List<GameObject> weplist = new List<GameObject>(GameObject.FindGameObjectsWithTag("DefensiveStructure"));
+        GenericWeapon tmp;
+        GameManagerBehavior gmb = gamemanager.GetComponent<GameManagerBehavior>();
+
+        foreach (GameObject wpn in weplist)
         {
-            // save last wave
-            // save amount of gold
-            // save the structures
-            // basically everything that wasn't an enemy
-            GameManagerBehavior gm = GameObject.Find("GameManager").GetComponent<GameManagerBehavior>();
-            PlayerPrefs.SetInt("Reichsmark", gm.Reichsmark);
-            PlayerPrefs.SetInt("Level", 1); // TODO: don't hardcode the current level :^)
-            PlayerPrefs.SetInt("Wave", gm.Wave);
-            // TODO: CROSSPLATFORM FILESYSTEM
-            //string path = "C:\\users\\" + System.Environment.UserName + "\\Documents\\TheRedTide";
-            //System.IO.Directory.CreateDirectory(@path);
-            string path = System.IO.Directory.GetCurrentDirectory();
-            //Debug.Log(path);
-            System.IO.File.Create(path + "\\SGMData");
-            System.IO.StreamWriter file =
-                new System.IO.StreamWriter(path+ "\\SGMData");
+            tmp = wpn.GetComponent<GenericWeapon>();
 
-
-            // SAVED GAME STRUCTURE:
-            // BIGTOWERS DATA: a line with position and hitpoints for every instance
-            // MACHINEGUNS DATA: -||-
-            // TRAPS DATA:  -||-
-
-
-            List<GameObject> weplist = new List<GameObject>(GameObject.FindGameObjectsWithTag("DefensiveStructures"));
-            GenericWeapon tmp;
-            file.WriteLine("====BIG TOWER DATA====");
-
-            foreach (GameObject wpn in weplist)
+            if (wpn.name.Contains("bigTower"))
             {
-                if (wpn.name.Contains("bigTower"))
-                {
-                    tmp = wpn.GetComponent<GenericWeapon>();
-                    file.WriteLine(wpn.transform.position + "," + tmp.hitpoints);
-                }
+                //Debug.Log(wpn.transform.position);
+                Game.current.bigtowers.Add(new StructureData(tmp.hitpoints, wpn.transform.position, 0));
             }
-
-
-            file.WriteLine("====MACHINE GUN DATA====");
-
-            foreach (GameObject wpn in weplist)
+            else if (wpn.name.Contains("machineGun"))
             {
-                if (wpn.name.Contains("machineGun"))
-                {
-                    tmp = wpn.GetComponent<GenericWeapon>();
-                    file.WriteLine(wpn.transform.position + "," + tmp.hitpoints);
-                }
+                Game.current.machineguns.Add(new StructureData(tmp.hitpoints, wpn.transform.position, wpn.gameObject.GetComponent<WeaponData>().curr_level));
             }
+        }
 
-            weplist = new List<GameObject>(GameObject.FindGameObjectsWithTag("Trap"));
+        weplist = new List<GameObject>(GameObject.FindGameObjectsWithTag("Trap"));
 
-            file.WriteLine("====TRAP DATA====");
+        foreach (GameObject wpn in weplist)
+        {
+            tmp = wpn.GetComponent<GenericWeapon>();
+            Game.current.traps.Add(new StructureData(tmp.hitpoints, wpn.transform.position, 0));
+        }
 
-            foreach (GameObject wpn in weplist)
-            {
- 
-                tmp = wpn.GetComponent<GenericWeapon>();
-                file.WriteLine(wpn.transform.position + "," + tmp.hitpoints);
 
-            }
+        Game.current.reicshmark_count = gmb.reichsmark_stage_start;
+        Game.current.stage_number = gmb.Stage;
+        Game.current.level = 1;
 
-            SceneManager.LoadScene("MainMenu");
-        }*/
+        // reload
+        SceneManager.LoadScene("Level1");
 
     }
 }

@@ -95,8 +95,8 @@ public class MoveEnemy : GenericEnemy {
                         // enemy reached final objective
                         Destroy(gameObject);
 
-                        AudioSource audioSource = gameObject.GetComponent<AudioSource>();
-                        AudioSource.PlayClipAtPoint(audioSource.clip, transform.position);
+                        //AudioSource audioSource = gameObject.GetComponent<AudioSource>();
+                        //AudioSource.PlayClipAtPoint(audioSource.clip, transform.position);
 
                         // deduct health
                         GameManagerBehavior gameManager = GameObject.Find("GameManager").GetComponent<GameManagerBehavior>();

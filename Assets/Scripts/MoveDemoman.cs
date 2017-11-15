@@ -95,8 +95,8 @@ public class MoveDemoman : GenericEnemy
                         // enemy reached final objective
                         Destroy(gameObject);
 
-                        AudioSource audioSource = gameObject.GetComponent<AudioSource>();
-                        AudioSource.PlayClipAtPoint(audioSource.clip, transform.position);
+                        //AudioSource audioSource = gameObject.GetComponent<AudioSource>();
+                        //AudioSource.PlayClipAtPoint(audioSource.clip, transform.position);
 
                         // deduct health
                         GameManagerBehavior gameManager = GameObject.Find("GameManager").GetComponent<GameManagerBehavior>();
@@ -122,7 +122,6 @@ public class MoveDemoman : GenericEnemy
         // collision with either trap, or bombardment
         //Debug.Log("collision with bombardment");
         BomberBehaviour bb = collision.gameObject.GetComponent<BomberBehaviour>();
-        Debug.Log("collision");
         if (bb == null)
         {
 

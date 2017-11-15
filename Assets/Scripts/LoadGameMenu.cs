@@ -24,11 +24,15 @@ public class LoadGameMenu : MonoBehaviour
         int n = SaveLoad.savedGames.Count - 1;
         foreach (Game saveGame in SaveLoad.savedGames)
         {
-            Debug.Log(n - i);
+            //Debug.Log(n - i);
             for (j = 0; j < 5; j++)
             {
                 if (gameSlotButtons[j].name.Contains((n - i).ToString()))
-                    gameSlotButtons[j].transform.Find("Text").gameObject.GetComponent<Text>().text = "LEVEL " + saveGame.level + " - WAVE " + saveGame.wave_number;
+                {
+                    if (saveGame.stage_number >= 4)
+                        gameSlotButtons[j].transform.Find("Text").gameObject.GetComponent<Text>().text = "LEVEL " + saveGame.level + " - STAGE 3+";
+                    else gameSlotButtons[j].transform.Find("Text").gameObject.GetComponent<Text>().text = "LEVEL " + saveGame.level + " - STAGE " + saveGame.stage_number;
+                }
             }
             i++;
         }
