@@ -15,7 +15,9 @@ public class MoveEnemy : GenericEnemy {
 		lastWaypointSwitchTime = Time.time;
         spawnTime = new DateTime();
         spawnTime = DateTime.Now;
-        bounty = 25;
+        gm = GameObject.Find("GameManager");
+        gmb = gm.GetComponent<GameManagerBehavior>();
+        //bounty = 25;
         //hitpoints = 2;
     }
 
@@ -51,7 +53,7 @@ public class MoveEnemy : GenericEnemy {
     void Update () {
         // 1 
 
-        if (!GameObject.Find("GameManager").GetComponent<GameManagerBehavior>().gameOver)
+        if (!gmb.gameOver)
         {
             if (hitpoints > 0)
             {
@@ -99,8 +101,8 @@ public class MoveEnemy : GenericEnemy {
                         //AudioSource.PlayClipAtPoint(audioSource.clip, transform.position);
 
                         // deduct health
-                        GameManagerBehavior gameManager = GameObject.Find("GameManager").GetComponent<GameManagerBehavior>();
-                        gameManager.Health -= 1;
+                       
+                        gmb.Health -= 1;
 
                     }
                 }
@@ -109,7 +111,7 @@ public class MoveEnemy : GenericEnemy {
             {
                 // add gold
 
-                GameObject.Find("GameManager").GetComponent<GameManagerBehavior>().Reichsmark += bounty;
+                gmb.Reichsmark += bounty;
                 Destroy(gameObject);  
             }
         }

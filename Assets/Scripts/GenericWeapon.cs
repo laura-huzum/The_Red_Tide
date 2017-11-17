@@ -10,6 +10,10 @@ public class GenericWeapon : MonoBehaviour
     public int hitpoints;
     public int damage;
     public bool shooting_state;
+    [HideInInspector]
+    public GameObject gm;
+    [HideInInspector]
+    public GameManagerBehavior gmb;
 
 
 }

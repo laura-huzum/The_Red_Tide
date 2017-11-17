@@ -51,6 +51,7 @@ public class SpawnStage : MonoBehaviour {
         int indx = wave_indx - 1;
         if (indx < NrWaves)
         {
+           
             wavesStructure[indx].InfantryPerWave = infantryCount;
             wavesStructure[indx].DemomenPerWave = demoCount;
             wavesStructure[indx].TanksPerWave = tankCount;
@@ -88,6 +89,7 @@ public class SpawnStage : MonoBehaviour {
     // useful if we need to modify the spawn interval between two particular waves
     public void startSpawn()
     {
+        //WDebug.Log("Here1");
         StartCoroutine(Stager());
     }
 
@@ -95,12 +97,14 @@ public class SpawnStage : MonoBehaviour {
 
     public IEnumerator Stager()
     {
+        //Debug.Log("Here2");
         yield return StartCoroutine(GenerateStage());
     }
 
 
     public IEnumerator GenerateStage()
     {
+        //Debug.Log("Here3");
         int wave_indx;
         int infantry;
         int tanks;
@@ -133,7 +137,7 @@ public class SpawnStage : MonoBehaviour {
             {
                 tanks++;
                 T34();
-                yield return period;
+                yield return new WaitForSeconds(period_between_units * 5);
             }
 
             if (wave_indx < NrWaves - 1)

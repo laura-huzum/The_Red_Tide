@@ -14,6 +14,8 @@ public class MoveTank : GenericEnemy
     private TimeSpan interval = new TimeSpan(0, 0, 0, 0, 2000); // 2000 ms
 
     bool moves = true;
+    private float stop = 0;
+    private float start = 0;
 
     // Use this for initialization
     void Start()
@@ -21,7 +23,9 @@ public class MoveTank : GenericEnemy
         lastWaypointSwitchTime = Time.time;
         spawnTime = new DateTime();
         spawnTime = DateTime.Now;
-        bounty = 25;
+        target = null;
+        gm = GameObject.Find("GameManager");
+        gmb = gm.GetComponent<GameManagerBehavior>();
         //hitpoints = 2;
     }
 
@@ -47,7 +51,7 @@ public class MoveTank : GenericEnemy
     {
         // 1 
 
-        if (!GameObject.Find("GameManager").GetComponent<GameManagerBehavior>().gameOver)
+        if (!gmb.gameOver)
         {
             if (hitpoints > 0)
             {
@@ -57,10 +61,13 @@ public class MoveTank : GenericEnemy
                 float pathLength = Vector3.Distance(startPosition, endPosition);
                 float totalTimeForPath = pathLength / speed;
                 // TODO: it rushes if it spends too much time between the same waypoints
-                float currentTimeOnPath = Time.time - lastWaypointSwitchTime;
-
+                
                 if (moves)
                 {
+                    //Debug.Log("start = " + start + " stop = " + stop);
+                    float currentTimeOnPath = Time.time - lastWaypointSwitchTime - (start - stop);
+                    //Debug.Log("currentTimeOnPath = " + currentTimeOnPath + "totalTimeOnPath" + totalTimeForPath);
+                    //Debug.Log(currentTimeOnPath / totalTimeForPath) ;
                     gameObject.transform.position = Vector3.Lerp(startPosition, endPosition, currentTimeOnPath / totalTimeForPath);
                 }
                 if (!moves)
@@ -75,6 +82,11 @@ public class MoveTank : GenericEnemy
                         lastWaypointSwitchTime = Time.time;
                         // rotate into move direction
                         RotateIntoMoveDirection();
+                        if (start > 0 && stop > 0)
+                        {
+                            start = 0;
+                            stop = 0;
+                        }
                     }
                     else
                     {
@@ -85,8 +97,8 @@ public class MoveTank : GenericEnemy
                         //AudioSource.PlayClipAtPoint(audioSource.clip, transform.position);
 
                         // deduct health
-                        GameManagerBehavior gameManager = GameObject.Find("GameManager").GetComponent<GameManagerBehavior>();
-                        gameManager.Health -= 1;
+                        
+                        gmb.Health -= 1;
 
                     }
                 }
@@ -95,17 +107,24 @@ public class MoveTank : GenericEnemy
             {
                 // add gold
 
-                GameObject.Find("GameManager").GetComponent<GameManagerBehavior>().Reichsmark += bounty;
+                gmb.Reichsmark += bounty;
                 Destroy(gameObject);
             }
         }
     }
 
 
+   
+
+    private void OnMouseExit()
+    {
+        gameObject.transform.Find("range_indicator").gameObject.SetActive(false);
+    }
+
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        Debug.Log("collision with bombardment");
+        //Debug.Log("collision with bombardment");
         BomberBehaviour bb = collision.gameObject.GetComponent<BomberBehaviour>();
 
         if (bb == null)
@@ -116,28 +135,38 @@ public class MoveTank : GenericEnemy
         {
             hitpoints -= bb.bombardment_damage;
         }
-        if (collision.collider.gameObject.CompareTag("DefensiveStructure") && collision.collider.GetType().Equals(typeof(BoxCollider2D)))
+        if (moves && collision.collider.gameObject.CompareTag("DefensiveStructure") && collision.collider.GetType().Equals(typeof(BoxCollider2D)))
         {
+            //lastWaypointSwitchTime = Time.time;
+            Debug.Log("should stop");
             moves = false;
+            stop = Time.time;
             target = collision.collider.gameObject;
         }
 
     }
     private void OnCollisionExit2D(Collision2D collision)
     {
-        //if (collision.collider.gameObject.GetType().Equals(typeof(GenericWeapon)))
-        moves = true;
+        if (collision.collider.gameObject.CompareTag("DefensiveStructure") && !moves)
+        {
+            start = Time.time;
+            moves = true;
+        }
         //transform.Find("tank_top").rotation = Quaternion.AngleAxis(Mathf.Atan2(transform.position.y, transform.position.x) * 180 / Mathf.PI, Vector3.forward);
     }
+
+
 
     private void OnCollisionStay2D(Collision2D collision)
     {
         // if collided with a defensive structure that is not a trap
-        if (collision.collider.gameObject.GetComponent<GenericWeapon>()!= null)
+        if (target != null && target.CompareTag("DefensiveStructure") && 
+            collision.collider.gameObject.GetComponent<GenericWeapon>() != null )
         {
             if (DateTime.Now.TimeOfDay - last_shot > interval )
             {
-                Debug.Log("tank shooting at nothing" + collision.collider.gameObject.name);
+                moves = false;
+                Debug.Log("tank shooting at " + target);
 
                 //Debug.Log("shooting at this old boy: " + seconds_oldest_target);
                 // play sound

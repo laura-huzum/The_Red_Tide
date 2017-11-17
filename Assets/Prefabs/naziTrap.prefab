@@ -181,8 +181,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hitpoints: 5
-  damage: 10
+  damage: 75
   shooting_state: 0
+  gm: {fileID: 0}
+  gmb: {fileID: 0}
 --- !u!212 &212809450626523084
 SpriteRenderer:
   m_ObjectHideFlags: 1

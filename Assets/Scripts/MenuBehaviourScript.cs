@@ -6,6 +6,8 @@ using UnityEngine.SceneManagement;
 public class MenuBehaviourScript : MonoBehaviour {
     
     public GameObject loadingImage;
+    public GameObject tutImage;
+    public bool toggle_tutorial = true;
 
     public void Start()
     {
@@ -30,6 +32,14 @@ public class MenuBehaviourScript : MonoBehaviour {
     {
         Application.Quit();
     }
+
+    public void toggleTut()
+    {
+        tutImage.SetActive(toggle_tutorial);
+        toggle_tutorial = !toggle_tutorial;
+    }
+
+    
 
 }
 

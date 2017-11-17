@@ -33,6 +33,7 @@ public class GameManagerBehavior : MonoBehaviour {
     public GameObject wall_prefab;
     public GameObject quitPrompt;
     public GameObject continueEndlessPrompt;
+    public GameObject RetryPrompt;
     public GameObject Road;
 
     // used to determine if we place structures in this state or not
@@ -66,21 +67,29 @@ public class GameManagerBehavior : MonoBehaviour {
         set
         {
             stage = value;
-            
+
             // TODO: display "START stage" message
 
-            
-            StageCountLabel.text = "STAGE   " + stage + "     [";
-            for (int i = 0; i < stage; i++)
+            int smaller_stage = stage - 1;
+
+            if (smaller_stage == 0)
             {
-                StageCountLabel.text += "☆";
+                StageCountLabel.text = "STAGE   1     [☆]";
             }
-            if (stage == 3)
+            else
             {
-                // stage 3+ --> endless
-                StageCountLabel.text += "+";
+                StageCountLabel.text = "STAGE   " + smaller_stage + "     [";
+                for (int i = 0; i < Mathf.Min(smaller_stage, 3); i++)
+                {
+                    StageCountLabel.text += "☆";
+                }
+                if (smaller_stage > 3)
+                {
+                    // stage 3+ --> endless
+                    StageCountLabel.text += "+";
+                }
+                StageCountLabel.text += "]";
             }
-            StageCountLabel.text += "]";
         }
     }
 
@@ -105,10 +114,11 @@ public class GameManagerBehavior : MonoBehaviour {
                 // TODO: add defeat prompt = restart stage or quit
                 gameOver = true;
                 GameOverLabel.SetActive(true);
+                RetryPrompt.SetActive(true);
 
                 // play defeat song
-                AudioSource audioSource = gameObject.GetComponent<AudioSource>();
-                audioSource.Play();
+                /*AudioSource audioSource = gameObject.GetComponent<AudioSource>();
+                audioSource.Play();*/
                 // TODO: replace nazi flag with commie flag
             }
 
@@ -134,7 +144,7 @@ public class GameManagerBehavior : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-		Reichsmark = 1000000;
+		Reichsmark = 800;
         Stage = 1;
         // for this level
         Health = 1;
@@ -238,7 +248,7 @@ public class GameManagerBehavior : MonoBehaviour {
 
     public void buySpecial()
     {
-        if (Reichsmark > special_cost)
+        if (Reichsmark >= special_cost)
         {
             // spawn a semitransparent rectangle (the AoEIndicator) that follows the cursor
             // to indicate the area of effect.
@@ -259,7 +269,7 @@ public class GameManagerBehavior : MonoBehaviour {
     {
         if (!stage_fight)
         {
-            if (Reichsmark > trap_cost)
+            if (Reichsmark >= trap_cost)
             {
                 Instantiate(trap_prefab);
                 // deduct gold
@@ -278,7 +288,7 @@ public class GameManagerBehavior : MonoBehaviour {
     public void buyTower()
     {
         if (!stage_fight) {
-            if (Reichsmark > tower_cost)
+            if (Reichsmark >= tower_cost)
             {
                 Instantiate(tower_prefab);
                 // deduct gold
@@ -297,7 +307,7 @@ public class GameManagerBehavior : MonoBehaviour {
     {
         if (!stage_fight)
         {
-            if (Reichsmark > machineGun_cost)
+            if (Reichsmark >= machineGun_cost)
             {
                 Instantiate(machinegun_prefab);
                 // deduct gold
@@ -327,8 +337,10 @@ public class GameManagerBehavior : MonoBehaviour {
         stage_fight = true;
         spawn_finished = false;
         reichsmark_stage_start = Reichsmark;
-        if (stage == 1)
+        stageSpawner.period_between_units = 1f;
+        if (Stage == 1)
         {
+           
             // set stage parameters
             stageSpawner.setWaveCount(4);
             stageSpawner.setWaveComposition(1, 3, 0, 0, time_between_waves);
@@ -338,11 +350,11 @@ public class GameManagerBehavior : MonoBehaviour {
 
             // begin stage
             stageSpawner.startSpawn();
-            stage++;
-
+            Stage++;
+        
         }
 
-        else if (stage == 2)
+        else if (Stage == 2)
         {
             // set stage parameters
             stageSpawner.setWaveCount(6);
@@ -356,10 +368,10 @@ public class GameManagerBehavior : MonoBehaviour {
 
             // begin stage
             stageSpawner.startSpawn();
-            stage++;
+            Stage++;
         }
 
-        else if (stage == 3)
+        else if (Stage == 3)
         {
             // set stage parameters
             stageSpawner.setWaveCount(7);
@@ -374,7 +386,7 @@ public class GameManagerBehavior : MonoBehaviour {
 
             // begin stage
             stageSpawner.startSpawn();
-            stage++;
+            Stage++;
         }
 
         else
@@ -382,6 +394,11 @@ public class GameManagerBehavior : MonoBehaviour {
 
             if (continue_endless)
             {
+                int nr_infantry;
+                int nr_demomen;
+                int nr_tanks;
+                int wave_size;
+                
                 // spawn a stage with a random composition and a random number of waves
                 // starting at 7 waves per stage, increases to a maximum of 12 waves per stage
                 // no more than ten beings in a wave
@@ -390,8 +407,23 @@ public class GameManagerBehavior : MonoBehaviour {
                 // no more than 5 tanks in a wave
                 // bounty for all should be increased by 20% (new bounty = 1.2*current_bounty)
                 Debug.Log("ENDLESS");
-
+                stageSpawner.setWaveCount(stage + 7);
                 
+                for(int i = 1; i <= stageSpawner.NrWaves; i++)
+                {
+                    wave_size = Random.Range(8, 20);
+                    nr_infantry = Random.Range(0, 6);
+                    nr_demomen = Random.Range(0, wave_size - nr_infantry - 1);
+                    nr_tanks = 1 + Random.Range(0, wave_size - nr_infantry - nr_demomen - 5);
+                    stageSpawner.setWaveComposition(i+i, nr_infantry, nr_demomen, nr_tanks, time_between_waves);
+                }
+
+
+
+
+                stageSpawner.startSpawn();
+                if (Stage < 9)
+                    Stage++;
             }
         }
 

@@ -180,10 +180,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b17fb2985fdc74e4b833552078462b27, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 2
-  hitpoints: 4
-  bounty: 50
-  damage: 1
+  speed: 1.5
+  hitpoints: 75
+  bounty: 75
+  damage: 50
+  gm: {fileID: 0}
+  gmb: {fileID: 0}
   waypoints: []
 --- !u!212 &212701968468759480
 SpriteRenderer:

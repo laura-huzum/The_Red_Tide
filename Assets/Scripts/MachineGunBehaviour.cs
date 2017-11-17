@@ -7,20 +7,16 @@ using UnityEngine.UI;
 public class MachineGunBehaviour : GenericWeapon
 {
 
-    GameObject structure;
-    public GameObject structure_prefab;
   
-    private GameManagerBehavior gameManager;
-
     bool isColliding;
 
-
     private TimeSpan last_shot;
-    private TimeSpan interval = new TimeSpan(0,0,0,0,1500); // 1500 ms
+    private TimeSpan interval; // 1500 ms
     private List<GameObject> enemyList;
     
     private GameObject target;
     bool toggle_collider = false;
+    WeaponData wepData;
 
 
     // Use this for initialization
@@ -28,14 +24,14 @@ public class MachineGunBehaviour : GenericWeapon
     void Start()
     {
         enemyList = new List<GameObject>();
-        
-    }
-
-    private void Awake()
-    {
-        gameManager = GameObject.Find("GameManager").GetComponent<GameManagerBehavior>();
+       
+        gm = GameObject.Find("GameManager");
+        gmb = gm.GetComponent<GameManagerBehavior>();
         gameObject.GetComponent<CircleCollider2D>().enabled = false;
         shooting_state = false;
+        wepData = gameObject.GetComponent<WeaponData>();
+        interval = new TimeSpan(0, 0, 0, 0, (int)(wepData.CurrentLevel.atk_speed * 1000));
+
     }
 
 
@@ -55,12 +51,12 @@ public class MachineGunBehaviour : GenericWeapon
         else
         {
             // toggle the structure's circle collider corresponding to the phase of the game (placement or fight)
-            if (gameManager.GetComponent<GameManagerBehavior>().stage_fight && !toggle_collider)
+            if (gmb.stage_fight && !toggle_collider)
             {
                 gameObject.GetComponent<CircleCollider2D>().enabled = true;
                 toggle_collider = true;
             }
-            else if (!gameManager.GetComponent<GameManagerBehavior>().stage_fight && toggle_collider)
+            else if (!gmb.stage_fight && toggle_collider)
             {
                 gameObject.GetComponent<CircleCollider2D>().enabled = false;
                 toggle_collider = false;
@@ -74,7 +70,7 @@ public class MachineGunBehaviour : GenericWeapon
         
         WeaponData weaponData = gameObject.GetComponent<WeaponData>();
         UpgradeLevel nextLevel = weaponData.getNextLevel();
-        if (nextLevel != null && gameManager.Reichsmark > nextLevel.cost && !gameManager.stage_fight)
+        if (nextLevel != null && gmb.Reichsmark >= nextLevel.cost && !gmb.stage_fight)
         {
             return true;
         }
@@ -87,31 +83,9 @@ public class MachineGunBehaviour : GenericWeapon
     {
 
         int cost = gameObject.GetComponent<WeaponData>().levels[0].cost;
-        return gameManager.Reichsmark >= cost;
+        return gmb.Reichsmark >= cost;
     }
 
-
-    /*public void PlaceAction()
-    {
-        structure = (GameObject) Instantiate(structure_prefab, Camera.main.ScreenToViewportPoint(Input.mousePosition), Quaternion.identity);
-        
-        GameManagerBehavior gameManagerTemp = structure.GetComponent<MachineGunBehaviour>().gameManager;
-        int place_cost = structure.GetComponent<WeaponData>().levels[0].cost;
-
-
-        if (gameManagerTemp.Reichsmark < place_cost)
-        {
-            // if cannot afford, destroy the object
-            Destroy(structure);
-            
-        }
-        else
-        {
-            // deduct gold
-            structure.layer = LayerMask.NameToLayer("HoverOver");
-            gameManagerTemp.Reichsmark -= place_cost;
-        }
-    }*/
 
 
     private void OnMouseUp()
@@ -141,13 +115,43 @@ public class MachineGunBehaviour : GenericWeapon
                 {
                     gameObject.GetComponent<WeaponData>().upgrade();
                     // deduct gold
-                    gameManager.Reichsmark -= gameObject.GetComponent<WeaponData>().CurrentLevel.cost;
+                    gmb.Reichsmark -= gameObject.GetComponent<WeaponData>().CurrentLevel.cost;
+                    // update damage and speed
+                    interval = new TimeSpan(0, 0, 0, 0, (int)(wepData.CurrentLevel.atk_speed * 1000));
+                    damage = wepData.CurrentLevel.damage;
                 }
            }
         }
     }
 
+    private void OnMouseOver()
+    {
 
+        if (shooting_state && gameObject.GetComponent<WeaponData>().curr_level < 2)
+        {
+            transform.Find("upgrade_tooltip").gameObject.SetActive(true);
+        }
+        BoxCollider2D gun_base = gameObject.GetComponent<BoxCollider2D>();
+        Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Vector2 down_left_corner = new Vector2(gameObject.transform.position.x - gun_base.size.x / 2,
+                                                gameObject.transform.position.y - gun_base.size.y / 2);
+        Vector2 up_right_corner = new Vector2(gameObject.transform.position.x + gun_base.size.x / 2,
+                                                gameObject.transform.position.y + gun_base.size.y / 2);
+        if (mousePosition.x > down_left_corner.x && mousePosition.y > down_left_corner.y &&
+            mousePosition.x < up_right_corner.x && mousePosition.y < up_right_corner.y)
+        {
+            // turn on the range indicator
+            gameObject.transform.Find("range_indicator").gameObject.SetActive(true);
+        }
+    }
+
+    private void OnMouseExit()
+    {
+        gameObject.transform.Find("range_indicator").gameObject.SetActive(false);
+        transform.Find("upgrade_tooltip").gameObject.SetActive(false);
+    }
+
+    
 
 
     void OnCollisionEnter2D(Collision2D collision)
@@ -199,7 +203,7 @@ public class MachineGunBehaviour : GenericWeapon
 
     private void OnCollisionStay2D(Collision2D collision)
     {
-        if (! gameManager.GetComponent<GameManagerBehavior>().gameOver)
+        if (! gmb.gameOver)
         {
             if (shooting_state && enemyList.Count >= 1)
             {

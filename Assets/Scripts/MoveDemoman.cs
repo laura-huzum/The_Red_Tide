@@ -17,7 +17,8 @@ public class MoveDemoman : GenericEnemy
         lastWaypointSwitchTime = Time.time;
         spawnTime = new DateTime();
         spawnTime = DateTime.Now;
-        bounty = 25;
+        gm = GameObject.Find("GameManager");
+        gmb = gm.GetComponent<GameManagerBehavior>();
         //hitpoints = 2;
     }
 
@@ -53,7 +54,7 @@ public class MoveDemoman : GenericEnemy
     {
         // 1 
 
-        if (!GameObject.Find("GameManager").GetComponent<GameManagerBehavior>().gameOver)
+        if (!gmb.gameOver)
         {
             if (hitpoints > 0)
             {
@@ -99,8 +100,8 @@ public class MoveDemoman : GenericEnemy
                         //AudioSource.PlayClipAtPoint(audioSource.clip, transform.position);
 
                         // deduct health
-                        GameManagerBehavior gameManager = GameObject.Find("GameManager").GetComponent<GameManagerBehavior>();
-                        gameManager.Health -= 1;
+                        
+                        gmb.Health -= 1;
 
                     }
                 }
@@ -109,7 +110,7 @@ public class MoveDemoman : GenericEnemy
             {
                 // add gold
 
-                GameObject.Find("GameManager").GetComponent<GameManagerBehavior>().Reichsmark += bounty;
+                gmb.Reichsmark += bounty;
                 Destroy(gameObject);
             }
         }

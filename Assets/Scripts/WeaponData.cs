@@ -1,10 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 [System.Serializable]
 public class UpgradeLevel {
     public int cost;
+    public int damage;
+    public float atk_speed;
+    public TimeSpan attk_speed;
     public GameObject visualization;
   
 }

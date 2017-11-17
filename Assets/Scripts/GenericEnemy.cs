@@ -11,17 +11,10 @@ public class GenericEnemy : MonoBehaviour
     public int hitpoints;
     public int bounty;
     public int damage;
+    [HideInInspector]
+    public GameObject gm;
+    [HideInInspector]
+    public GameManagerBehavior gmb;
 
 
-    // Use this for initialization
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
 }

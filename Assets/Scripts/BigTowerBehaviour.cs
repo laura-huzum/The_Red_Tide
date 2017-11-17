@@ -15,9 +15,8 @@ public class BigTowerBehaviour : GenericWeapon
     private List<GameObject> enemyList;
     private double seconds_oldest_target;
     private GameObject target;
-
-    GameManagerBehavior gameManager;
     bool toggle_collider = false;
+    bool inRange = false;
 
 
     void Start()
@@ -30,7 +29,8 @@ public class BigTowerBehaviour : GenericWeapon
 
     private void Awake()
     {
-        gameManager = GameObject.Find("GameManager").GetComponent<GameManagerBehavior>();
+        gm = GameObject.Find("GameManager");
+        gmb = gm.GetComponent<GameManagerBehavior>();
         gameObject.GetComponent<CircleCollider2D>().enabled = false;
         shooting_state = false;
         gameObject.layer = LayerMask.NameToLayer("HoverOver");
@@ -52,12 +52,12 @@ public class BigTowerBehaviour : GenericWeapon
         else
         {
             // toggle the structure's circle collider corresponding to the phase of the game (placement or fight)
-            if (gameManager.GetComponent<GameManagerBehavior>().stage_fight && !toggle_collider)
+            if (gmb.stage_fight && !toggle_collider)
             {
                 gameObject.GetComponent<CircleCollider2D>().enabled = true;
                 toggle_collider = true;
             }
-            else if (!gameManager.GetComponent<GameManagerBehavior>().stage_fight && toggle_collider)
+            else if (!gmb.stage_fight && toggle_collider)
             {
                 gameObject.GetComponent<CircleCollider2D>().enabled = false;
                 toggle_collider = false;
@@ -82,6 +82,30 @@ public class BigTowerBehaviour : GenericWeapon
         }
     }
 
+
+
+
+    private void OnMouseOver()
+    {
+        BoxCollider2D gun_base = gameObject.GetComponent<BoxCollider2D>();
+        Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Vector2 down_left_corner = new Vector2(gameObject.transform.position.x - gun_base.size.x / 2,
+                                                gameObject.transform.position.y - gun_base.size.y / 2);
+        Vector2 up_right_corner = new Vector2(gameObject.transform.position.x + gun_base.size.x / 2,
+                                                gameObject.transform.position.y + gun_base.size.y / 2);
+        if (mousePosition.x > down_left_corner.x && mousePosition.y > down_left_corner.y &&
+            mousePosition.x < up_right_corner.x && mousePosition.y < up_right_corner.y)
+        {
+            // turn on the range indicator
+            gameObject.transform.Find("range_indicator").gameObject.SetActive(true);
+        }
+    }
+
+    private void OnMouseExit()
+    {
+        gameObject.transform.Find("range_indicator").gameObject.SetActive(false);
+    }
+
     void OnCollisionEnter2D(Collision2D collision)
     {
         //Debug.Log("Collision entered");
@@ -99,16 +123,16 @@ public class BigTowerBehaviour : GenericWeapon
                 child.GetComponent<SpriteRenderer>().color = Color.red;
                 //Debug.Log(child);
             }
-        else
+        else if (collision.collider.gameObject.CompareTag("EnemyTank"))
         {
             // check tag for tanks too
+
             // check that collision is on the box collider
-            if (collision.collider.gameObject.CompareTag("EnemyTank"))
-            {
-                enemyList.Add(collision.collider.gameObject);
+
+            
+            enemyList.Add(collision.collider.gameObject);
                 
-                //Debug.Log("Enemy list add " + enemyList.Count);
-            }
+
         }
 
         //Debug.Log("COLLIDING BOYS");
@@ -128,7 +152,7 @@ public class BigTowerBehaviour : GenericWeapon
         }
         else
         {
-
+            inRange = false;
             enemyList.Remove(collision.collider.gameObject);//(collision.otherCollider.transform.parent.gameObject);
             //Debug.Log("Enemy list remove " + enemyList.Count);
         }
@@ -139,16 +163,34 @@ public class BigTowerBehaviour : GenericWeapon
     private void OnCollisionStay2D(Collision2D collision)
     {
 
-        if (!gameManager.GetComponent<GameManagerBehavior>().gameOver)
+        if (!gmb.gameOver)
         {
             if (shooting_state && enemyList.Count >= 1)
             {
                 //get array of enemies
                 //collision.otherCollider.transform.parent.gameObject;
-
+                
+                
+                
                 update_oldest_enemy();
+                double dist;
+                float x1, x2, y1, y2;
+                x1 = target.transform.position.x;
+                y1 = target.transform.position.y;
+                x2 = collision.otherCollider.gameObject.transform.position.x;
+                y2 = collision.otherCollider.gameObject.transform.position.y;
+                dist = Vector2.Distance(new Vector2(x1, y1), new Vector2(x2, y2));
 
-                if (DateTime.Now.TimeOfDay - last_shot > interval)
+                //Debug.Log(dist);
+                //dist = Math.Sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
+                //Debug.Log(dist);
+                //Debug.Log("radius = " + collision.otherCollider.gameObject.GetComponent<CircleCollider2D>().radius);
+                if (dist < collision.otherCollider.gameObject.GetComponent<CircleCollider2D>().radius)
+                    inRange = true;
+                else
+                    inRange = false;
+
+                if (DateTime.Now.TimeOfDay - last_shot > interval && inRange)
                 {
 
                     //Debug.Log("shooting at this old boy: " + seconds_oldest_target);

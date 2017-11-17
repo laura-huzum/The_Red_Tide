@@ -274,7 +274,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bomber_speed: 5
-  bombardment_damage: 5
+  bombardment_damage: 1000
   damage_area_collider: {fileID: 0}
 --- !u!212 &212336385354178486
 SpriteRenderer:
