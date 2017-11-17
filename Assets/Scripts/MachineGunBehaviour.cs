@@ -12,7 +12,7 @@ public class MachineGunBehaviour : GenericWeapon
 
     private TimeSpan last_shot;
     private TimeSpan interval; // 1500 ms
-    private List<GameObject> enemyList;
+    private List<GameObject> enemyList = new List<GameObject>();
     
     private GameObject target;
     bool toggle_collider = false;
@@ -23,12 +23,11 @@ public class MachineGunBehaviour : GenericWeapon
     // Start is called when the object becomes part of the scene
     void Start()
     {
-        enemyList = new List<GameObject>();
        
         gm = GameObject.Find("GameManager");
         gmb = gm.GetComponent<GameManagerBehavior>();
         gameObject.GetComponent<CircleCollider2D>().enabled = false;
-        shooting_state = false;
+        //shooting_state = false;
         wepData = gameObject.GetComponent<WeaponData>();
         interval = new TimeSpan(0, 0, 0, 0, (int)(wepData.CurrentLevel.atk_speed * 1000));
 
@@ -43,6 +42,7 @@ public class MachineGunBehaviour : GenericWeapon
             Destroy(gameObject);
         if (!shooting_state)
         {
+            gameObject.transform.Find("range_indicator").gameObject.SetActive(true);
             gameObject.transform.position = Vector2.Lerp(transform.position, Camera.main.ScreenToWorldPoint(Input.mousePosition), 1);
             gameObject.transform.position = new Vector3(gameObject.transform.position.x,
                                                 gameObject.transform.position.y,
@@ -147,8 +147,14 @@ public class MachineGunBehaviour : GenericWeapon
 
     private void OnMouseExit()
     {
-        gameObject.transform.Find("range_indicator").gameObject.SetActive(false);
-        transform.Find("upgrade_tooltip").gameObject.SetActive(false);
+        if (shooting_state)
+        {
+           
+                // turn off the range indicator
+                gameObject.transform.Find("range_indicator").gameObject.SetActive(false);
+                transform.Find("upgrade_tooltip").gameObject.SetActive(false);
+            
+        }
     }
 
     
@@ -191,10 +197,11 @@ public class MachineGunBehaviour : GenericWeapon
             {
                 child.GetComponent<SpriteRenderer>().color = Color.white;
             }
-        } else
+        }
+        else
         {
-
-            enemyList.Remove(collision.collider.gameObject);//(collision.otherCollider.transform.parent.gameObject);
+            if (enemyList.Count > 0)
+                enemyList.Remove(collision.collider.gameObject);//(collision.otherCollider.transform.parent.gameObject);
             //Debug.Log("Enemy list remove " + enemyList.Count);
         }
 

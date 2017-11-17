@@ -4,14 +4,15 @@ using System.Collections;
 public class TrapBehaviour : GenericWeapon
 {
 
-    bool onRoad;
+    public bool onRoad;
     bool onTrap;
 
     // Use this for initialization
     void Start()
     {
         gameObject.layer = LayerMask.NameToLayer("HoverOver");
-        gameObject.GetComponent<SpriteRenderer>().color = Color.red;
+        if (!shooting_state)
+            gameObject.GetComponent<SpriteRenderer>().color = Color.red;
     }
 
     // Update is called once per frame
@@ -48,6 +49,7 @@ public class TrapBehaviour : GenericWeapon
 
             if (onTrap || !onRoad)
             {
+                Debug.Log("here2");
                 gameObject.GetComponent<SpriteRenderer>().color = Color.red;
             }
             else if (!onTrap && onRoad)
@@ -95,6 +97,7 @@ public class TrapBehaviour : GenericWeapon
 
             if (onTrap || !onRoad)
             {
+                Debug.Log("here");
                 gameObject.GetComponent<SpriteRenderer>().color = Color.red;
             }
             else if (!onTrap && onRoad)

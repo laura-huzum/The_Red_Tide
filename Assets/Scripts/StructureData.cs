@@ -23,7 +23,7 @@ public class StructureData
         position = new float[3];
         position[0] = pos.x;
         position[1] = pos.y;
-        position[2] = pos.x;
+        position[2] = pos.z;
         this.upgrade_level = upgrade_level;
     }
 

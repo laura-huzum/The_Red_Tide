@@ -184,7 +184,8 @@ public class GameManagerBehavior : MonoBehaviour {
 
             if (living_enemies.Count == 0 && stage_fight == true)
             {
-                Debug.Log("all enemies are dead");
+                Debug.Log("all enemies are dead"); // <=> stage over
+                quitPrompt.GetComponent<QuitSavePrompt>().updateGameData(); // save the stage data
                 stage_fight = false;
             }
 
@@ -349,6 +350,7 @@ public class GameManagerBehavior : MonoBehaviour {
             stageSpawner.setWaveComposition(4, 4, 1, 0, time_between_waves);
 
             // begin stage
+            
             stageSpawner.startSpawn();
             Stage++;
         
@@ -442,12 +444,13 @@ public class GameManagerBehavior : MonoBehaviour {
         {
             tmp = Instantiate(machinegun_prefab);
             wep = tmp.GetComponent<MachineGunBehaviour>();
+            tmp.transform.position = new Vector3(strucdata.position[0], strucdata.position[1], strucdata.position[2]);
+            wep.hitpoints = strucdata.hitpoints;
             wep.shooting_state = true;
             tmp.layer = LayerMask.NameToLayer("Default");
             WeaponData wd = tmp.GetComponent<WeaponData>();
             wd.CurrentLevel = wd.levels[strucdata.upgrade_level];
-            tmp.transform.position = new Vector3(strucdata.position[0], strucdata.position[1], strucdata.position[2]);
-            wep.hitpoints = strucdata.hitpoints;
+            
 
         }
 
@@ -466,9 +469,12 @@ public class GameManagerBehavior : MonoBehaviour {
         foreach (StructureData strucdata in Game.current.traps)
         {
             tmp = Instantiate(trap_prefab);
+            
             wep = tmp.GetComponent<TrapBehaviour>();
             wep.shooting_state = true;
+            //tmp.GetComponent<TrapBehaviour>().onRoad = true;
             tmp.layer = LayerMask.NameToLayer("Default");
+            //tmp.GetComponent<SpriteRenderer>().color = Color.white;
 
             tmp.transform.position = new Vector3(strucdata.position[0], strucdata.position[1], strucdata.position[2]);
             wep.hitpoints = strucdata.hitpoints;

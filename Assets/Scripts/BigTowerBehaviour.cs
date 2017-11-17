@@ -32,7 +32,7 @@ public class BigTowerBehaviour : GenericWeapon
         gm = GameObject.Find("GameManager");
         gmb = gm.GetComponent<GameManagerBehavior>();
         gameObject.GetComponent<CircleCollider2D>().enabled = false;
-        shooting_state = false;
+        //shooting_state = false;
         gameObject.layer = LayerMask.NameToLayer("HoverOver");
     }
 
@@ -44,6 +44,7 @@ public class BigTowerBehaviour : GenericWeapon
 
         if (!shooting_state)
         {
+            gameObject.transform.Find("range_indicator").gameObject.SetActive(true);
             gameObject.transform.position = Vector2.Lerp(transform.position, Camera.main.ScreenToWorldPoint(Input.mousePosition), 1);
             gameObject.transform.position = new Vector3(gameObject.transform.position.x,
                                                 gameObject.transform.position.y,
@@ -121,6 +122,7 @@ public class BigTowerBehaviour : GenericWeapon
             foreach (Transform child in transform)
             {
                 child.GetComponent<SpriteRenderer>().color = Color.red;
+                
                 //Debug.Log(child);
             }
         else if (collision.collider.gameObject.CompareTag("EnemyTank"))
@@ -153,7 +155,8 @@ public class BigTowerBehaviour : GenericWeapon
         else
         {
             inRange = false;
-            enemyList.Remove(collision.collider.gameObject);//(collision.otherCollider.transform.parent.gameObject);
+            if (enemyList.Count > 0)
+                enemyList.Remove(collision.collider.gameObject);//(collision.otherCollider.transform.parent.gameObject);
             //Debug.Log("Enemy list remove " + enemyList.Count);
         }
 
@@ -165,6 +168,7 @@ public class BigTowerBehaviour : GenericWeapon
 
         if (!gmb.gameOver)
         {
+            
             if (shooting_state && enemyList.Count >= 1)
             {
                 //get array of enemies
